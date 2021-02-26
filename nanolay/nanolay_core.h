@@ -19,7 +19,7 @@
 // #define _100MHZ             100000000UL
 
 // User needs to set one of these macros to change Fosc
-#define MASTER_CLK_4MHZ     true    // DEFAULT
+#define MASTER_CLK_4MHZ     true
 #define MASTER_CLK_8MHZ     false
 #define MASTER_CLK_16MHZ    false
 #define MASTER_CLK_20MHZ    false
@@ -64,9 +64,10 @@
 #define PB14                0x14
 #define PB15                0x15
 
+
 // *****************************************************************************
-// @desc:       Initialize system clock, disables all perihperals,
-//                  set default GPIO states
+// @desc:       Initialize system clock, peripherals, and default GPIO states.
+//                  Required to call this function at the start of main program
 // @args:       None
 // @returns:    None
 // *****************************************************************************
@@ -75,16 +76,59 @@ void SysInit( void );
 
 // *****************************************************************************
 // @desc:       Initialize system CLK registers based on MASTER_CLK_xMHZ macro
+//                  This is called by SysInit()
 // @args:       None
 // @returns:    None
 // *****************************************************************************
 void ClockInit( void );
 
 
+// *****************************************************************************
+// @desc:       Sets the default GPIO setting for all pins at startup
+//                  This is called by SysInit()
+// @args:       None
+// @returns:    None
+// *****************************************************************************
 void GPIOInit( void );
+
+
+// *****************************************************************************
+// @desc:       Disables all peripherals. User must manually enable a peripheral
+//                  in the main program before using peripheral specific
+//                  function APIs. This is called by SysInit()
+// @args:       None
+// @returns:    None
+// *****************************************************************************
 void DisableAllPeripherals( void );
+
+
+// *****************************************************************************
+// @desc:       Set a pin as Digital OUTPUT or Digital INPUT. This is similar
+//                  to Arduino's PinMode() function
+// @args:       pin [uint8_t]: PAx or PBx defined in GPIO Macro Definitions
+//              dir [bool]: OUTPUT or INPUT
+// @returns:    None
+// *****************************************************************************
 void DigitalSetPin( uint8_t pin, bool dir );
+
+
+// *****************************************************************************
+// @desc:       Set a pin to output HIGH or LOW, provided that it is set as
+//                  OUTPUT prior. This is similar to Arduino's DigitalWrite()
+//                  function
+// @args:       pin [uint8_t]: PAx or PBx defined in GPIO Macro Definitions
+//              state [bool]: HIGH or LOW
+// @returns:    None
+// *****************************************************************************
 void DigitalDrvPin( uint8_t pin, bool state );
+
+
+// *****************************************************************************
+// @desc:       Read from a digital pin, provided that it is set as INPUT prior.
+//                  This is similar to Arduino's DigitalRead() function
+// @args:       pin [uint8_t]: PAx or PBx defined in GPIO Macro Definitions
+// @returns:    [bool]: HIGH or LOW (1 or 0)
+// *****************************************************************************
 bool DigitalReadPin( uint8_t pin );
 
 #endif // _NANOLAY_CORE_H

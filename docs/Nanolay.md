@@ -1,11 +1,12 @@
 # *Nanolay* : Collection of Custom dsPIC33CK Library
 
-| Parameter     | Value                           |
-| ------------- | ------------------------------- |
-| Revision      | A                               |
-| Target Device | DSPIC33CK256MP202               |
-| Author        | Mark Angelo Tarvina (mttarvina) |
-| Email         | mttarvina@gmail.com             |
+| Parameter         | Value                           |
+| ----------------- | ------------------------------- |
+| Revision          | A                               |
+| Target Device     | DSPIC33CK256MP202               |
+| Development Board | Nanolay RevA                    |
+| Author            | Mark Angelo Tarvina (mttarvina) |
+| Email             | mttarvina@gmail.com             |
 
 
 
@@ -29,7 +30,7 @@
 
 #### Oscillator Subsystem
 
-![osc_diagram](C:\Users\mttar\Documents\Software\Platforms\MPLAB\Projects\docs\img\osc_diagram.PNG)
+![osc_diagram](img\osc_diagram.PNG)
 
 
 
@@ -42,7 +43,7 @@ For PLL operation, the following requirements must be met at all times without e
 * The PFD Input Frequency (FPFD) must be in the range of 8 MHz to (FVCO/16) MHz
 * The VCO Output Frequency (FVCO) must be in the range of 400 MHz to 1600 MHz
 
-![osc_pll_diagram](C:\Users\mttar\Documents\Software\Platforms\MPLAB\Projects\docs\img\osc_pll_diagram.PNG)
+![osc_pll_diagram](img\osc_pll_diagram.PNG)
 
 
 
@@ -55,7 +56,7 @@ For APLL operation, the following requirements must be met at all times without 
 * The APFD Input Frequency (AFPFD) must be in the range of 8 MHz to (AFVCO/16) MHz
 * The AVCO Output Frequency (AFVCO) must be in the range of 400 MHz to 1600 MHz
 
-![osc_apll_diagram](C:\Users\mttar\Documents\Software\Platforms\MPLAB\Projects\docs\img\osc_apll_diagram.PNG)
+![osc_apll_diagram](img\osc_apll_diagram.PNG)
 
 
 
@@ -101,32 +102,133 @@ For APLL operation, the following requirements must be met at all times without 
 | System Initialization     | Sets the system clock frequency, default GPIO and other peripheral states. Disables all peripheral modules by default |
 | GPIO Function APIs        |                                                              |
 | Timer1 Function APIs      | Used for basic delay functionalities                         |
-| I/O Mapping Function APIs |                                                              |
+| I/O Mapping Function APIs | [ *** to be implemented ]                                    |
 
 
 
-#### Frequency Macro Definitions
+#### MASTER CLOCK Macro Settings
 
-| Macro Variable | Value       | Description |
-| -------------- | ----------- | ----------- |
-| _4MHZ          | 4000000UL   | [Default]   |
-| _8MHZ          | 8000000UL   |             |
-| _16MHZ         | 16000000UL  |             |
-| _20MHZ         | 20000000UL  |             |
-| _25MHZ         | 25000000UL  |             |
-| _30MHZ         | 30000000UL  |             |
-| _40MHZ         | 40000000UL  |             |
-| _50MHZ         | 50000000UL  |             |
-| _100MHZ        | 100000000UL |             |
+Set one of these macro variables to **true** to set the master clock frequency. This corresponds to the value of FOSC. There should only be one of these variables set to **true**.
+
+| Macro Variable    | Value | Description |
+| ----------------- | ----- | ----------- |
+| MASTER_CLK_4MHZ   | true  | [Default]   |
+| MASTER_CLK_8MHZ   | false |             |
+| MASTER_CLK_16MHZ  | false |             |
+| MASTER_CLK_20MHZ  | false |             |
+| MASTER_CLK_25MHZ  | false |             |
+| MASTER_CLK_30MHZ  | false |             |
+| MASTER_CLK_40MHZ  | false |             |
+| MASTER_CLK_50MHZ  | false |             |
+| MASTER_CLK_100MHZ | false |             |
+
+
 
 #### Boolean Macro Definitions
 
+| Macro Variable | Value | Description                                                  |
+| -------------- | ----- | ------------------------------------------------------------ |
+| CLKOUTEN       | false | Set this to true if you want to look at the CLKOUT waveform at RB1 pin. Output signal frequency should be equal to FOSC/2 |
+| INPUT          | true  | Used in GPIO function APIs                                   |
+| OUTPUT         | false | Used in GPIO function APIs                                   |
+| LOW            | false | Used in GPIO function APIs                                   |
+| HIGH           | true  | Used in GPIO function APIs                                   |
+
+
+
+#### GPIO Pin Macro Definitions
+
 | Macro Variable | Value | Description |
 | -------------- | ----- | ----------- |
-| INPUT          | true  |             |
-| OUTPUT         | false |             |
-| LOW            | false |             |
-| HIGH           | true  |             |
+| PORT_A         | 0x01  |             |
+| PORT_B         | 0x02  |             |
+| PA0            | 0x01  |             |
+| PA1            | 0x02  |             |
+| PA2            | 0x03  |             |
+| PA3            | 0x04  |             |
+| PA4            | 0x05  |             |
+| PB0            | 0x06  |             |
+| PB1            | 0x07  |             |
+| PB2            | 0x08  |             |
+| PB3            | 0x09  |             |
+| PB4            | 0x0A  |             |
+| PB5            | 0x0B  |             |
+| PB6            | 0x0C  |             |
+| PB7            | 0x0D  |             |
+| PB8            | 0x0E  |             |
+| PB9            | 0x0F  |             |
+| PB10           | 0x10  |             |
+| PB11           | 0x11  |             |
+| PB12           | 0x12  |             |
+| PB13           | 0x13  |             |
+| PB14           | 0x14  |             |
+| PB15           | 0x15  |             |
 
 
+
+#### Function APIs
+
+``` C
+// *****************************************************************************
+// @desc:       Initialize system clock, peripherals, and default GPIO states.
+//                  Required to call this function at the start of main program
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SysInit( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Initialize system CLK registers based on MASTER_CLK_xMHZ macro
+//                  This is called by SysInit()
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void ClockInit( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Disables all peripherals. User must manually enable a peripheral
+//                  in the main program before using peripheral specific
+//                  function APIs. This is called by SysInit()
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void DisableAllPeripherals( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Set a pin as Digital OUTPUT or Digital INPUT. This is similar
+//                  to Arduino's PinMode() function
+// @args:       pin [uint8_t]: PAx or PBx defined in GPIO Macro Definitions
+//              dir [bool]: OUTPUT or INPUT
+// @returns:    None
+// *****************************************************************************
+void DigitalSetPin( uint8_t pin, bool dir );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Set a pin to output HIGH or LOW, provided that it is set as
+//                  OUTPUT prior. This is similar to Arduino's DigitalWrite()
+//                  function
+// @args:       pin [uint8_t]: PAx or PBx defined in GPIO Macro Definitions
+//              state [bool]: HIGH or LOW
+// @returns:    None
+// *****************************************************************************
+void DigitalDrvPin( uint8_t pin, bool state );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Read from a digital pin, provided that it is set as INPUT prior.
+//                  This is similar to Arduino's DigitalRead() function
+// @args:       pin [uint8_t]: PAx or PBx defined in GPIO Macro Definitions
+// @returns:    [bool]: HIGH or LOW (1 or 0)
+// *****************************************************************************
+bool DigitalReadPin( uint8_t pin );
+```
 
