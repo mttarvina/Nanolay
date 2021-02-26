@@ -23,7 +23,7 @@
 
 #### Pinout
 
-![pinout1](img\pinout1.PNG)
+![pinout1](img/pinout1.PNG)
 
 ![pinout2](img\pinout2.PNG)
 
