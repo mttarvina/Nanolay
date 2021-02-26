@@ -25,13 +25,13 @@
 
 ![pinout1](img/pinout1.PNG)
 
-![pinout2](img\pinout2.PNG)
+![pinout2](img/pinout2.PNG)
 
 
 
 #### Oscillator Subsystem
 
-![osc_diagram](img\osc_diagram.PNG)
+![osc_diagram](img/osc_diagram.PNG)
 
 
 
@@ -44,7 +44,7 @@ For PLL operation, the following requirements must be met at all times without e
 * The PFD Input Frequency (FPFD) must be in the range of 8 MHz to (FVCO/16) MHz
 * The VCO Output Frequency (FVCO) must be in the range of 400 MHz to 1600 MHz
 
-![osc_pll_diagram](img\osc_pll_diagram.PNG)
+![osc_pll_diagram](img/osc_pll_diagram.PNG)
 
 
 
@@ -57,13 +57,13 @@ For APLL operation, the following requirements must be met at all times without 
 * The APFD Input Frequency (AFPFD) must be in the range of 8 MHz to (AFVCO/16) MHz
 * The AVCO Output Frequency (AFVCO) must be in the range of 400 MHz to 1600 MHz
 
-![osc_apll_diagram](img\osc_apll_diagram.PNG)
+![osc_apll_diagram](img/osc_apll_diagram.PNG)
 
 
 
 #### GPIO Diagram
 
-![gpio_diagram](img\gpio_diagram.PNG)
+![gpio_diagram](img/gpio_diagram.PNG)
 
 
 
@@ -126,7 +126,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![4mhz_clkout](img\4mhz_clkout.png)
+![4mhz_clkout](img/4mhz_clkout.png)
 
 
 
@@ -154,7 +154,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![8mhz_clkout](img\8mhz_clkout.png)
+![8mhz_clkout](img/8mhz_clkout.png)
 
 
 
@@ -182,7 +182,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![16mhz_clkout](img\16mhz_clkout.png)
+![16mhz_clkout](img/16mhz_clkout.png)
 
 
 
@@ -210,7 +210,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![20mhz_clkout](img\20mhz_clkout.png)
+![20mhz_clkout](img/20mhz_clkout.png)
 
 
 
@@ -238,7 +238,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![25mhz_clkout](img\25mhz_clkout.png)
+![25mhz_clkout](img/25mhz_clkout.png)
 
 
 
@@ -266,7 +266,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![30mhz_clkout](img\30mhz_clkout.png)
+![30mhz_clkout](img/30mhz_clkout.png)
 
 
 
@@ -294,7 +294,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![40mhz_clkout](img\40mhz_clkout.png)
+![40mhz_clkout](img/40mhz_clkout.png)
 
 
 
@@ -322,7 +322,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![50mhz_clkout](img\50mhz_clkout.png)
+![50mhz_clkout](img/50mhz_clkout.png)
 
 
 
@@ -350,7 +350,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 #### CLKOUT Waveform @ PB1
 
-![100mhz_clkout](img\100mhz_clkout.png)
+![100mhz_clkout](img/100mhz_clkout.png)
 
 
 
