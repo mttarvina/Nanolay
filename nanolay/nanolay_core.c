@@ -1,3 +1,12 @@
+/* ************************************************************************** */
+// Nanolay - Core Library Source File
+//
+// Author:          Mark Angelo Tarvina (mttarvina)
+// Email:           mttarvina@gmail.com
+// Revision:        1.0
+// Last Updated:    26.Feb.2021
+/* ************************************************************************** */
+
 #include "nanolay_core.h"
 
 
@@ -97,6 +106,10 @@ void SysInit( void ) {
     if ( CLKOUTEN ) {
         DigitalSetPin(PB1, OUTPUT);
     }
+    else {
+        DigitalSetPin(PB1, INPUT);
+    }
+    DigitalSetPin(PB0, INPUT);
 }
 
 
@@ -109,6 +122,70 @@ void ClockInit( void ){
         APLLFBD1 = 0x96;            // APLLFBDIV 150;  
         APLLDIV1 = 0x141;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/3;
     }    
+    if ( MASTER_CLK_8MHZ ){
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled; 
+        PLLFBD = 0x96;              // PLLFBDIV 150;
+        PLLDIV = 0x141;             // POST1DIV 1:4; VCODIV FVCO/3; POST2DIV 1:1; 
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1;
+        APLLFBD1 = 0x96;            // APLLFBDIV 150;  
+        APLLDIV1 = 0x141;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/3;    
+    }
+    if ( MASTER_CLK_16MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x64;              // PLLFBDIV 100;  
+        PLLDIV = 0x255;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:5;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+        APLLDIV1 = 0x255;           // APOST1DIV 1:5; APOST2DIV 1:5; AVCODIV FVCO/2;
+    }
+    if ( MASTER_CLK_20MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x64;              // PLLFBDIV 100;  
+        PLLDIV = 0x254;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:4;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+        APLLDIV1 = 0x254;           // APOST1DIV 1:5; APOST2DIV 1:4; AVCODIV FVCO/2;
+    }
+    if ( MASTER_CLK_25MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x64;              // PLLFBDIV 100;  
+        PLLDIV = 0x244;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:4;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+        APLLDIV1 = 0x244;           // APOST1DIV 1:4; APOST2DIV 1:4; AVCODIV FVCO/2;
+    }
+    if ( MASTER_CLK_30MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x96;              // PLLFBDIV 150;  
+        PLLDIV = 0x154;             // POST1DIV 1:5; VCODIV FVCO/3; POST2DIV 1:4;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x96;            // APLLFBDIV 150;  
+        APLLDIV1 = 0x154;           // APOST1DIV 1:5; APOST2DIV 1:4; AVCODIV FVCO/3;
+    }
+    if ( MASTER_CLK_40MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x64;              // PLLFBDIV 100;  
+        PLLDIV = 0x252;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:2;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+        APLLDIV1 = 0x252;           // APOST1DIV 1:5; APOST2DIV 1:2; AVCODIV FVCO/2;
+    }
+    if ( MASTER_CLK_50MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x64;              // PLLFBDIV 100;  
+        PLLDIV = 0x242;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:2;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+        APLLDIV1 = 0x242;           // APOST1DIV 1:4; APOST2DIV 1:2; AVCODIV FVCO/2;
+    }
+    if ( MASTER_CLK_100MHZ ){ 
+        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+        PLLFBD = 0x64;              // PLLFBDIV 100;  
+        PLLDIV = 0x241;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:1;
+        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+        APLLDIV1 = 0x241;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/2;
+    }
     
     OSCTUN = 0x00;                  // TUN Center frequency;  
     REFOCONL = 0x00;                // ROEN disabled; ROSWEN disabled; ROSLP disabled; ROSEL FOSC; ROOUT disabled; ROSIDL disabled;
@@ -122,6 +199,19 @@ void ClockInit( void ){
         __builtin_write_OSCCONH((uint8_t) (0x07));
         __builtin_write_OSCCONL((uint8_t) (0x00));
     }
+    if ( MASTER_CLK_8MHZ ){
+        // CF no clock failure; NOSC FRC; CLKLOCK unlocked; OSWEN Switch is Complete; 
+        __builtin_write_OSCCONH((uint8_t) (0x00));
+        __builtin_write_OSCCONL((uint8_t) (0x00));        
+    }
+    if ( MASTER_CLK_16MHZ || MASTER_CLK_20MHZ || MASTER_CLK_25MHZ || MASTER_CLK_30MHZ || MASTER_CLK_40MHZ || MASTER_CLK_50MHZ || MASTER_CLK_100MHZ ){
+        // CF no clock failure; NOSC FRCPLL; CLKLOCK unlocked; OSWEN Switch is Complete; 
+        __builtin_write_OSCCONH((uint8_t) (0x01));
+        __builtin_write_OSCCONL((uint8_t) (0x01));
+        // Wait for Clock switch to occur
+        while (OSCCONbits.OSWEN != 0);
+        while (OSCCONbits.LOCK != 1);
+    }
     
     WDTCONLbits.ON = 0;             // Disable Watchdog Timer 
 }
@@ -134,8 +224,16 @@ void GPIOInit( void ){
     LATB = 0x0000;
 
     // Setting the GPIO Direction SFR(s)
-    TRISA = 0x001F;
-    TRISB = 0xFFFF;
+    // TRISA = 0x001F; // default to INPUT
+    // TRISB = 0xFFFF; // default to INPUT
+    TRISA = 0x0000; // default to OUTPUT
+    TRISB = 0x0000; // default to OUTPUT
+
+    // Setting the Analog/Digital Configuration SFR(s)
+    // ANSELA = 0x001F;    // default as Analog INPUT
+    // ANSELB = 0x0385;    // default as Analog INPUT
+    ANSELA = 0x0000;    // default as Digital INPUT
+    ANSELB = 0x0000;    // default as Digital INPUT
 
     // Setting the Weak Pull Up and Weak Pull Down SFR(s)
     CNPDA = 0x0000;
@@ -146,10 +244,6 @@ void GPIOInit( void ){
     // Setting the Open Drain SFR(s)
     ODCA = 0x0000;
     ODCB = 0x0000;
-
-    // Setting the Analog/Digital Configuration SFR(s)
-    ANSELA = 0x001F;
-    ANSELB = 0x0385;
 }
 
 
@@ -367,5 +461,7 @@ bool DigitalReadPin( uint8_t pin ) {
             return _RB14;
         case PB15:
             return _RB15;
+        default:
+            return false;
     }
 }

@@ -1,3 +1,13 @@
+/* ************************************************************************** */
+// Nanolay - Core Library Header File
+//
+// Author:          Mark Angelo Tarvina (mttarvina)
+// Email:           mttarvina@gmail.com
+// Revision:        1.0
+// Last Updated:    26.Feb.2021
+/* ************************************************************************** */
+
+
 #ifndef _NANOLAY_CORE_H
 #define	_NANOLAY_CORE_H
 
@@ -5,18 +15,6 @@
 #include <p33CK256MP202.h>
 #include <stdbool.h>
 #include <stdint.h>
-
-
-// available MASTER_CLK Frequencies: FOSC
-// #define _4MHZ               4000000UL
-// #define _8MHZ               8000000UL
-// #define _16HZ               16000000UL
-// #define _20MHZ              20000000UL
-// #define _25MHZ              25000000UL
-// #define _30MHZ              30000000UL
-// #define _40MHZ              40000000UL
-// #define _50MHZ              50000000UL
-// #define _100MHZ             100000000UL
 
 // User needs to set one of these macros to change Fosc
 #define MASTER_CLK_4MHZ     true
@@ -30,7 +28,7 @@
 #define MASTER_CLK_100MHZ   false
 
 // Enables Fosc/2 output at RB1 pin
-#define CLKOUTEN            true            
+#define CLKOUTEN            false            
 
 // Boolean Macros
 #define INPUT               true

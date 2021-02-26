@@ -12,7 +12,8 @@
 
 ## Wishlist
 
-* Add function in Core library to enable Reference Oscillator Output and assign it to a specific output pin
+* Add function API in Core library to enable Reference Oscillator Output and assign it to a specific output pin
+* Add function API in Core library to enable Input Change Notification on a specific GPIO pin
 
 
 
@@ -60,6 +61,16 @@ For APLL operation, the following requirements must be met at all times without 
 
 
 
+#### GPIO Diagram
+
+![gpio_diagram](img\gpio_diagram.PNG)
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 ## Important Notes
 
 #### Unused I/O
@@ -67,11 +78,35 @@ For APLL operation, the following requirements must be met at all times without 
 * Unused I/O pins should be configured as outputs and driven to a logic low state.
 * Alternatively, connect a 1k to 10k resistor between VSS and unused pins, and drive the output to logic low.
 
+#### Measured Current Consumption
+
+This is a series of current measurements using Nanolay RevA board.
+
+| MASTER_CLK | CLKOUTEN | GPIO Default Setting | Current Consumption |
+| ---------- | -------- | -------------------- | ------------------- |
+| 4MHz       | true     | OUTPUT, Drive LOW    | 22.7mA              |
+| 4MHz       | false    | OUTPUT, Drive LOW    | 22.5mA              |
+| 4MHz       | false    | INPUT                | 22.4mA              |
+| 8MHz       | true     | OUTPUT, Drive LOW    | 23.8mA              |
+| 16MHz      | true     | OUTPUT, Drive LOW    | 27.9mA              |
+| 20MHz      | true     | OUTPUT, Drive LOW    | 28.3mA              |
+| 25MHz      | true     | OUTPUT, Drive LOW    | 28.9mA              |
+| 30MHz      | true     | OUTPUT, Drive LOW    | 31.1mA              |
+| 40MHz      | true     | OUTPUT, Drive LOW    | 31.1mA              |
+| 50MHz      | true     | OUTPUT, Drive LOW    | 32.5mA              |
+| 100MHz     | true     | OUTPUT, Drive LOW    | 38.9mA              |
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 ## MCC Settings @ 4MHz
 
 #### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
 
 | Parameter                   | Value                              | Description                                 |
 | --------------------------- | ---------------------------------- | ------------------------------------------- |
@@ -89,6 +124,238 @@ For APLL operation, the following requirements must be met at all times without 
 | DMT                         | Disabled/Not set                   |                                             |
 | Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                             |
 
+#### CLKOUT Waveform @ PB1
+
+![4mhz_clkout](img\4mhz_clkout.png)
+
+
+
+## MCC Settings @ 8MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                 |
+| --------------------------- | ---------------------------------- | ------------------------------------------- |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                      |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                            |
+| PLL                         | Disabled/Not set                   |                                             |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later     |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug |
+| VCO Divider                 | FVCO/3                             | Target is 400MHz                            |
+| AVCO Divider                | FVCO/3                             | Target is 400MHz                            |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                   |
+| Enable Clock Switching      | Enabled                            |                                             |
+| Enable Fail-Safe Monitor    | Enabled                            |                                             |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                             |
+| DMT                         | Disabled/Not set                   |                                             |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                             |
+
+#### CLKOUT Waveform @ PB1
+
+![8mhz_clkout](img\8mhz_clkout.png)
+
+
+
+## MCC Settings @ 16MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:5, Postscaler2 = 1:5 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/2                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/2                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![16mhz_clkout](img\16mhz_clkout.png)
+
+
+
+## MCC Settings @ 20MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:5, Postscaler2 = 1:4 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/2                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/2                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![20mhz_clkout](img\20mhz_clkout.png)
+
+
+
+## MCC Settings @ 25MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:4, Postscaler2 = 1:4 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/2                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/2                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![25mhz_clkout](img\25mhz_clkout.png)
+
+
+
+## MCC Settings @ 30MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:150, Postscaler1 = 1:5, Postscaler2 = 1:4 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/3                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/3                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![30mhz_clkout](img\30mhz_clkout.png)
+
+
+
+## MCC Settings @ 40MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:5, Postscaler2 = 1:2 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/2                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/2                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![40mhz_clkout](img\40mhz_clkout.png)
+
+
+
+## MCC Settings @ 50MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:4, Postscaler2 = 1:2 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/2                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/2                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![50mhz_clkout](img\50mhz_clkout.png)
+
+
+
+## MCC Settings @ 100MHz
+
+#### SYSTEM MODULE
+
+NOTE: System module settings should be adjusted to ensure that most of the peripherals will work at least during 4MHz operation.
+
+| Parameter                   | Value                              | Description                                                  |
+| --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
+| Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
+| FRC Post-scaler             | Disabled                           | Postscaler = 1:1                                             |
+| PLL                         | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:4, Postscaler2 = 1:1 |
+| Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
+| Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
+| VCO Divider                 | FVCO/2                             | Target is 400MHz                                             |
+| AVCO Divider                | FVCO/2                             | Target is 400MHz                                             |
+| Reference Oscillator Output | Disabled/Not Set                   | [Default]                                                    |
+| Enable Clock Switching      | Enabled                            |                                                              |
+| Enable Fail-Safe Monitor    | Enabled                            |                                                              |
+| ICD Emulator Pin            | PGC2, PGD2                         |                                                              |
+| DMT                         | Disabled/Not set                   |                                                              |
+| Watchdog: Enable Mode       | Software controlled: WDTCON.ON bit |                                                              |
+
+#### CLKOUT Waveform @ PB1
+
+![100mhz_clkout](img\100mhz_clkout.png)
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 ## Library: Core
@@ -101,12 +368,12 @@ For APLL operation, the following requirements must be met at all times without 
 | ------------------------- | ------------------------------------------------------------ |
 | System Initialization     | Sets the system clock frequency, default GPIO and other peripheral states. Disables all peripheral modules by default |
 | GPIO Function APIs        |                                                              |
-| Timer1 Function APIs      | Used for basic delay functionalities                         |
+| Timer1 Function APIs      | Used to implement a default timer based delay function       |
 | I/O Mapping Function APIs | [ *** to be implemented ]                                    |
 
 
 
-#### MASTER CLOCK Macro Settings
+#### MASTER CLOCK Macro Definitions
 
 Set one of these macro variables to **true** to set the master clock frequency. This corresponds to the value of FOSC. There should only be one of these variables set to **true**.
 
@@ -163,6 +430,30 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 | PB13           | 0x13  |             |
 | PB14           | 0x14  |             |
 | PB15           | 0x15  |             |
+
+
+
+#### GPIO Registers
+
+* The Data Direction register (TRISx) determines whether the pin is an input or an output. If the data direction bit is a ‘1’, then the pin is an input.
+* All port pins are defined as inputs after a Reset. Reads from the latch (LATx), read the latch. Writes to the latch, write the latch. Reads from the port (PORTx), read the port pins, while writes to the port pins, write the latch.
+* When a pin is shared with another peripheral or function that is defined as an input only, it is nevertheless regarded as a dedicated port because there is no other competing source of outputs.
+* Port pins can also be individually configured for either digital or open-drain output. This is controlled by the Open-Drain Enable for PORTx register, ODCx, associated with each port. Setting any of the bits configures the corresponding pin to act as an open-drain output. 
+* The port pins that are to function as analog inputs or outputs must have their corresponding ANSELx and TRISx bits set
+* In order to use port pins for I/O functionality with digital modules, such as timers, UARTs, etc., the corresponding ANSELx bit must be cleared.
+* If the TRISx bit is cleared (output) while the ANSELx bit is set, the digital output level (VOH or VOL) is converted by an analog peripheral, such as the ADC module or comparator module.
+* When the PORTx register is read, all pins configured as analog input channels are read as cleared (a low level)
+* Pins configured as digital inputs do not convert an analog input. Analog levels on any pin, defined as a digital input (including the ANx pins), can cause the input buffer to consume current that exceeds the device specifications.
+
+| Register | Description                         | 0 Value                                      | 1 Value                                      |
+| -------- | ----------------------------------- | -------------------------------------------- | -------------------------------------------- |
+| TRISx    | Output enable for port register     | OUTPUT                                       | INPUT                                        |
+| ANSELx   | Analog select for port register.    | Analog input DISABLED, Digital input ENABLED | Analog input ENABLED, Digital input DISABLED |
+| PORTx    | Input data for port register        | n/a                                          | n/a                                          |
+| LATx     | Output data for port register       | LOW                                          | HIGH                                         |
+| ODCx     | Open-drain enable for port register | DISABLED                                     | ENABLED                                      |
+| CNPUx    | Pull-up enable for port register    | DISABLED                                     | ENABLED                                      |
+| CNPDx    | Pull-down enable for port register  | DISABLED                                     | ENABLED                                      |
 
 
 
