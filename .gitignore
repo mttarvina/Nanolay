@@ -1,0 +1,7 @@
+.vscode/
+.generated_files/
+build/
+debug/
+dist/
+nbproject/
+Makefile
