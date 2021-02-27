@@ -98,6 +98,10 @@
 #pragma config BTMODE = SINGLE      //Device Boot Mode Configuration->Device is in Single Boot (legacy) mode
 
 
+// *****************************************************************************
+// System Initialization
+// *****************************************************************************
+
 void SysInit( void ) {
     GPIOInit();
     ClockInit();
@@ -216,6 +220,10 @@ void ClockInit( void ){
     WDTCONLbits.ON = 0;             // Disable Watchdog Timer 
 }
 
+
+// *****************************************************************************
+// GPIO Functions
+// *****************************************************************************
 
 void GPIOInit( void ){
 
@@ -463,5 +471,81 @@ bool DigitalReadPin( uint8_t pin ) {
             return _RB15;
         default:
             return false;
+    }
+}
+
+
+// *****************************************************************************
+// Timer1 Functions
+// *****************************************************************************
+
+volatile uint16_t timer1_elapsed_time;
+
+void Timer1Init( void ) {    
+    PMD1bits.T1MD = 0;              // enable TIMER1 peripheral
+    IPC0bits.T1IP = TMR1_PRIORITY;  // Set TIMER1 Interrupt Priority
+    
+    TMR1 = 0x00;                    // Clear TMR1 register; 
+    if ( MASTER_CLK_4MHZ ) {
+        PR1 = TMR1_PERIOD_4MHZ;
+    }
+    if ( MASTER_CLK_8MHZ ) {
+        PR1 = TMR1_PERIOD_8MHZ;
+    }
+    if ( MASTER_CLK_16MHZ ) {
+        PR1 = TMR1_PERIOD_16MHZ;
+    }
+    if ( MASTER_CLK_20MHZ ) {
+        PR1 = TMR1_PERIOD_20MHZ;
+    }
+    if ( MASTER_CLK_25MHZ ) {
+        PR1 = TMR1_PERIOD_25MHZ;
+    }
+    if ( MASTER_CLK_30MHZ ) {
+        PR1 = TMR1_PERIOD_30MHZ;
+    }
+    if ( MASTER_CLK_40MHZ ) {
+        PR1 = TMR1_PERIOD_40MHZ;
+    }
+    if ( MASTER_CLK_50MHZ ) {
+        PR1 = TMR1_PERIOD_50MHZ;
+    }
+    if ( MASTER_CLK_100MHZ ) {
+        PR1 = TMR1_PERIOD_100MHZ;
+    }
+    T1CON = 0x0000;                 // TCKPS 1:1; PRWIP Write complete; TMWIP Write complete; TON disabled; TSIDL disabled; TCS External; TECS FOSC; TSYNC disabled; TMWDIS disabled; TGATE disabled; 
+    Timer1Start();
+}
+
+
+void Timer1Start( void ) {
+    Timer1Reset();
+    T1CONbits.TON = true;           // Enabled Timer1
+    IFS0bits.T1IF = false;          // Reset Timer1 interrupt flag
+    IEC0bits.T1IE = true;           // Enable Timer1 interrupt
+}
+
+
+void Timer1Stop( void ) {
+    T1CONbits.TON = false;          // Disable Timer1
+    IEC0bits.T1IE = false;          // Disabled Timer1 interrupt
+}
+
+
+void Timer1Reset( void ) {
+    timer1_elapsed_time = 0;        // reset counter parameters
+}
+
+
+void __attribute__ ( ( interrupt, no_auto_psv ) ) _T1Interrupt() {                                                      
+    timer1_elapsed_time++;
+    IFS0bits.T1IF = false;
+}
+
+
+void wait_ms( uint16_t duration_ms ){
+    Timer1Reset();
+    while (timer1_elapsed_time < duration_ms) {
+        // do nothing
     }
 }

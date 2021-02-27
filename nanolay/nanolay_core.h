@@ -11,56 +11,64 @@
 #ifndef _NANOLAY_CORE_H
 #define	_NANOLAY_CORE_H
 
-
 #include <p33CK256MP202.h>
 #include <stdbool.h>
 #include <stdint.h>
 
 // User needs to set one of these macros to change Fosc
-#define MASTER_CLK_4MHZ     true
-#define MASTER_CLK_8MHZ     false
-#define MASTER_CLK_16MHZ    false
-#define MASTER_CLK_20MHZ    false
-#define MASTER_CLK_25MHZ    false
-#define MASTER_CLK_30MHZ    false
-#define MASTER_CLK_40MHZ    false
-#define MASTER_CLK_50MHZ    false
-#define MASTER_CLK_100MHZ   false
+#define MASTER_CLK_4MHZ         true
+#define MASTER_CLK_8MHZ         false
+#define MASTER_CLK_16MHZ        false
+#define MASTER_CLK_20MHZ        false
+#define MASTER_CLK_25MHZ        false
+#define MASTER_CLK_30MHZ        false
+#define MASTER_CLK_40MHZ        false
+#define MASTER_CLK_50MHZ        false
+#define MASTER_CLK_100MHZ       false
 
 // Enables Fosc/2 output at RB1 pin
-#define CLKOUTEN            false            
+#define CLKOUTEN                false            
 
-// Boolean Macros
-#define INPUT               true
-#define OUTPUT              false
-#define LOW                 false
-#define HIGH                true
+// GPIO Constants
+#define INPUT                   true
+#define OUTPUT                  false
+#define LOW                     false
+#define HIGH                    true
+#define PORT_A                  0x1
+#define PORT_B                  0x2
+#define PA0                     0x01
+#define PA1                     0x02
+#define PA2                     0x03
+#define PA3                     0x04
+#define PA4                     0x05
+#define PB0                     0x06
+#define PB1                     0x07
+#define PB2                     0x08
+#define PB3                     0x09
+#define PB4                     0x0A
+#define PB5                     0x0B
+#define PB6                     0x0C
+#define PB7                     0x0D
+#define PB8                     0x0E
+#define PB9                     0x0F
+#define PB10                    0x10
+#define PB11                    0x11
+#define PB12                    0x12
+#define PB13                    0x13
+#define PB14                    0x14
+#define PB15                    0x15
 
-// Custom GPIO Pin Macros
-#define PORT_A              0x1
-#define PORT_B              0x2
-
-#define PA0                 0x01
-#define PA1                 0x02
-#define PA2                 0x03
-#define PA3                 0x04
-#define PA4                 0x05
-#define PB0                 0x06
-#define PB1                 0x07
-#define PB2                 0x08
-#define PB3                 0x09
-#define PB4                 0x0A
-#define PB5                 0x0B
-#define PB6                 0x0C
-#define PB7                 0x0D
-#define PB8                 0x0E
-#define PB9                 0x0F
-#define PB10                0x10
-#define PB11                0x11
-#define PB12                0x12
-#define PB13                0x13
-#define PB14                0x14
-#define PB15                0x15
+// Timer1 constants
+#define TMR1_PRIORITY           0x04
+#define TMR1_PERIOD_4MHZ        0x07CF  // 1ms
+#define TMR1_PERIOD_8MHZ        0x0F9F  // 1ms
+#define TMR1_PERIOD_16MHZ       0x1F3F  // 1ms
+#define TMR1_PERIOD_20MHZ       0x270F  // 1ms
+#define TMR1_PERIOD_25MHZ       0x30D3  // 1ms
+#define TMR1_PERIOD_30MHZ       0x3A97  // 1ms
+#define TMR1_PERIOD_40MHZ       0x4E1F  // 1ms
+#define TMR1_PERIOD_50MHZ       0x61A7  // 1ms
+#define TMR1_PERIOD_100MHZ      0xC34F  // 1ms
 
 
 // *****************************************************************************
@@ -128,5 +136,47 @@ void DigitalDrvPin( uint8_t pin, bool state );
 // @returns:    [bool]: HIGH or LOW (1 or 0)
 // *****************************************************************************
 bool DigitalReadPin( uint8_t pin );
+
+
+// *****************************************************************************
+// @desc:       Enable Timer1 peripheral, initialize registers and timer period
+//                  Must be called before using wait_ms() function
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void Timer1Init( void );
+
+
+// *****************************************************************************
+// @desc:       Start Timer1, enable interrupt, clear interrupt flag
+//                  Internally called by Timer1Init()
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void Timer1Start( void );
+
+
+// *****************************************************************************
+// @desc:       Stop Timer1, disable interrupt
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void Timer1Stop( void );
+
+
+// *****************************************************************************
+// @desc:       Reset counter variables of internal timer1 object
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void Timer1Reset( void );
+
+
+// *****************************************************************************
+// @desc:       Delay function with 1ms resolution
+// @args:       duration_ms [uint16_t]: Wait duration in milliseconds
+// @returns:    None
+// *****************************************************************************
+void wait_ms( uint16_t duration_ms );
 
 #endif // _NANOLAY_CORE_H

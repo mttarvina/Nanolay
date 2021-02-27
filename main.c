@@ -12,9 +12,14 @@
 
 int main(void) {
     SysInit();
+    Timer1Init();
+    DigitalSetPin(PB2, OUTPUT);
     
     while (true) {
-    
+        DigitalDrvPin(PB2, HIGH);
+        wait_ms(50);
+        DigitalDrvPin(PB2, LOW);
+        wait_ms(50);
     }
     return 0;
 }
