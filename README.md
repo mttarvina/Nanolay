@@ -104,7 +104,7 @@ For APLL operation, the following requirements must be met at all times without 
 
 ### D. Timer1
 
-**NOTE: For the Core library, the Timer1 is used for basic delay function (blocking), thus Timer1 is only operating in Timer Mode.**
+**NOTE: For the Core library, the Timer1 is used as general purpose timer interrupt, thus Timer1 specifically operates in timer mode.
 
 ![timer1_diagram](docs/img/timer1_diagram.PNG)
 
@@ -352,9 +352,9 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 
 
 
-### F. Function APIs
+### F. Core Function APIs
 
-#### F.1. System and GPIO
+#### F.1. System
 
 ``` C
 // *****************************************************************************
@@ -386,6 +386,10 @@ void ClockInit( void );
 // *****************************************************************************
 void DisableAllPeripherals( void );
 ```
+
+
+
+#### F.2. GPIO
 
 ``` C
 // *****************************************************************************
@@ -420,18 +424,26 @@ void DigitalDrvPin( uint8_t pin, bool state );
 bool DigitalReadPin( uint8_t pin );
 ```
 
+``` C
+// *****************************************************************************
+// @desc:       Toggle a specific pin, provided it was set as OUTPUT prior
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void Toggle( uint8_t pin );
+```
+
 
 
 #### F.2. Timing and delay
 
 ``` C
 // *****************************************************************************
-// @desc:       Enable Timer1 peripheral, initialize registers and timer period
-//                  Must be called before using wait_ms() function
-// @args:       None
+// @desc:       Enable Timer1 peripheral, initialize registers and set interval
+// @args:       duration_ms [uint16_t]: User defined interrupt duration in ms
 // @returns:    None
 // *****************************************************************************
-void Timer1Init( void );
+void Timer1Init( uint16_t duration_ms );
 ```
 
 ``` C
@@ -455,49 +467,51 @@ void Timer1Stop( void );
 
 ``` C
 // *****************************************************************************
-// @desc:       Reset counter variables of internal timer1 object
+// @desc:       Assigns a function defined by the user as interrupt callback
+//                  function
 // @args:       None
 // @returns:    None
 // *****************************************************************************
-void Timer1Reset( void );
-```
-
-``` C
-// *****************************************************************************
-// @desc:       Delay function with 1ms resolution
-// @args:       duration_ms [uint16_t]: Wait duration in milliseconds
-// @returns:    None
-// *****************************************************************************
-void wait_ms( uint16_t duration_ms );
+void Timer1SetInterruptHandler(void (* InterruptHandler)(void));
 ```
 
 
 
 ### G. Sample Codes
 
-#### G.1. Toggle pin RB2 every 50ms using wait_ms()
+#### G.1. Toggle pin RB2 every 50ms, non-blocking, using the general purpose timer interrupt API
 
 Main program code:
 
 ``` C
 #include "nanolay/nanolay_core.h"
 
+uint8_t LedPin = PB2;
+
+void Timer1CallBack(void);                      // User defined interrupt callback function
+
 int main(void) {
     SysInit();
-    Timer1Init();
-    DigitalSetPin(PB2, OUTPUT);
+
+    Timer1Init(50);                             // Set interrupt interval to 50ms
+    Timer1SetInterruptHandler(&Timer1CallBack); // assign callback function as interrupt handler
+    Timer1Start();
     
+    DigitalSetPin(LedPin, OUTPUT);
+
     while (true) {
-        DigitalDrvPin(PB2, HIGH);
-        wait_ms(50);
-        DigitalDrvPin(PB2, LOW);
-        wait_ms(50);
+        // do nothing here
     }
     return 0;
 }
+
+void __attribute__ ((weak)) Timer1CallBack(void){
+    //  interrupt routine, should be kept short
+    Toggle(LedPin);
+}
 ```
 
-Waveform @ RB2:
+ Waveform @ RB2:
 
 ![wait_50ms](docs/img/wait_50ms.png)
 
@@ -511,7 +525,7 @@ Waveform @ RB2:
 
 ### A. CLKOUT Waveform @ RB1 Pin
 
-The following series of scopeshots were taken from RB1 pin setting OSC2 as CLKOUT pin. This was done when setting up the MASTER_CLK frequency to confirm if the device has been properly program. The following lines of code needs to be set:
+The following series of scopeshots were taken from RB1 pin setting OSC2 as CLKOUT pin. This was done when setting up the MASTER_CLK frequency to confirm if the device has been properly programmed. The following lines of code needs to be set:
 
 ``` C
 // file: nanolay_core.h

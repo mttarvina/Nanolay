@@ -14,6 +14,8 @@
 #include <p33CK256MP202.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
+
 
 // User needs to set one of these macros to change Fosc
 #define MASTER_CLK_4MHZ         true
@@ -69,6 +71,13 @@
 #define TMR1_PERIOD_40MHZ       0x4E1F  // 1ms
 #define TMR1_PERIOD_50MHZ       0x61A7  // 1ms
 #define TMR1_PERIOD_100MHZ      0xC34F  // 1ms
+
+
+// custom struct definition for Timer1
+typedef struct _TMR1_OBJ_STRUCT{
+    volatile uint16_t   counter;
+    volatile uint16_t   countmax;
+} TMR1_OBJ;
 
 
 // *****************************************************************************
@@ -139,12 +148,19 @@ bool DigitalReadPin( uint8_t pin );
 
 
 // *****************************************************************************
-// @desc:       Enable Timer1 peripheral, initialize registers and timer period
-//                  Must be called before using wait_ms() function
+// @desc:       Toggle a specific pin, provided it was set as OUTPUT prior
 // @args:       None
 // @returns:    None
 // *****************************************************************************
-void Timer1Init( void );
+void Toggle( uint8_t pin );
+
+
+// *****************************************************************************
+// @desc:       Enable Timer1 peripheral, initialize registers and set interval
+// @args:       duration_ms [uint16_t]: User defined interrupt interval in ms
+// @returns:    None
+// *****************************************************************************
+void Timer1Init( uint16_t duration_ms );
 
 
 // *****************************************************************************
@@ -165,18 +181,12 @@ void Timer1Stop( void );
 
 
 // *****************************************************************************
-// @desc:       Reset counter variables of internal timer1 object
+// @desc:       Assigns a function defined by the user as interrupt callback
+//                  function
 // @args:       None
 // @returns:    None
 // *****************************************************************************
-void Timer1Reset( void );
+void Timer1SetInterruptHandler(void (* InterruptHandler)(void));
 
-
-// *****************************************************************************
-// @desc:       Delay function with 1ms resolution
-// @args:       duration_ms [uint16_t]: Wait duration in milliseconds
-// @returns:    None
-// *****************************************************************************
-void wait_ms( uint16_t duration_ms );
 
 #endif // _NANOLAY_CORE_H

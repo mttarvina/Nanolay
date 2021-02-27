@@ -232,16 +232,16 @@ void GPIOInit( void ){
     LATB = 0x0000;
 
     // Setting the GPIO Direction SFR(s)
-    // TRISA = 0x001F; // default to INPUT
-    // TRISB = 0xFFFF; // default to INPUT
-    TRISA = 0x0000; // default to OUTPUT
-    TRISB = 0x0000; // default to OUTPUT
+    TRISA = 0x001F; // default to INPUT
+    TRISB = 0xFFFF; // default to INPUT
+    // TRISA = 0x0000; // default to OUTPUT
+    // TRISB = 0x0000; // default to OUTPUT
 
     // Setting the Analog/Digital Configuration SFR(s)
-    // ANSELA = 0x001F;    // default as Analog INPUT
-    // ANSELB = 0x0385;    // default as Analog INPUT
-    ANSELA = 0x0000;    // default as Digital INPUT
-    ANSELB = 0x0000;    // default as Digital INPUT
+    ANSELA = 0x001F;    // default as Analog INPUT
+    ANSELB = 0x0385;    // default as Analog INPUT
+    // ANSELA = 0x0000;    // default as Digital INPUT
+    // ANSELB = 0x0000;    // default as Digital INPUT
 
     // Setting the Weak Pull Up and Weak Pull Down SFR(s)
     CNPDA = 0x0000;
@@ -475,13 +475,63 @@ bool DigitalReadPin( uint8_t pin ) {
 }
 
 
+void Toggle( uint8_t pin ){
+    switch( pin ){
+        case PA0:
+            _RA0 = !_RA0;
+        case PA1:
+            _RA1 = !_RA1;
+        case PA2:
+            _RA2 = !_RA2;
+        case PA3:
+            _RA3 = !_RA3;
+        case PA4:
+            _RA4 = !_RA4;
+        case PB0:
+            _RB0 = !_RB0;
+        case PB1:
+            _RB1 = !_RB1;
+        case PB2:
+            _RB2 = !_RB2;
+        case PB3:
+            _RB3 = !_RB3;
+        case PB4:
+            _RB4 = !_RB4;
+        case PB5:
+            _RB5 = !_RB5;
+        case PB6:
+            _RB6 = !_RB6;
+        case PB7:
+            _RB7 = !_RB7;
+        case PB8:
+            _RB8 = !_RB8;
+        case PB9:
+            _RB9 = !_RB9;
+        case PB10:
+            _RB10 = !_RB10;
+        case PB11:
+            _RB11 = !_RB11;
+        case PB12:
+            _RB12 = !_RB12;
+        case PB13:
+            _RB13 = !_RB13;
+        case PB14:
+            _RB14 = !_RB14;
+        case PB15:
+            _RB15 = !_RB15;
+    }
+}
+
+
 // *****************************************************************************
 // Timer1 Functions
 // *****************************************************************************
 
-volatile uint16_t timer1_elapsed_time;
+static TMR1_OBJ timer1;
 
-void Timer1Init( void ) {    
+void (*Timer1InterruptHandler)(void) = NULL;
+
+void Timer1Init( uint16_t duration_ms ) {    
     PMD1bits.T1MD = 0;              // enable TIMER1 peripheral
     IPC0bits.T1IP = TMR1_PRIORITY;  // Set TIMER1 Interrupt Priority
     
@@ -514,15 +564,17 @@ void Timer1Init( void ) {
         PR1 = TMR1_PERIOD_100MHZ;
     }
     T1CON = 0x0000;                 // TCKPS 1:1; PRWIP Write complete; TMWIP Write complete; TON disabled; TSIDL disabled; TCS External; TECS FOSC; TSYNC disabled; TMWDIS disabled; TGATE disabled; 
-    Timer1Start();
+
+    timer1.counter = 0;
+    timer1.countmax = duration_ms;
 }
 
 
 void Timer1Start( void ) {
-    Timer1Reset();
-    T1CONbits.TON = true;           // Enabled Timer1
-    IFS0bits.T1IF = false;          // Reset Timer1 interrupt flag
+    timer1.counter = 0;
     IEC0bits.T1IE = true;           // Enable Timer1 interrupt
+    IFS0bits.T1IF = false;          // Reset Timer1 interrupt flag
+    T1CONbits.TON = true;           // Enabled Timer1
 }
 
 
@@ -532,20 +584,18 @@ void Timer1Stop( void ) {
 }
 
 
-void Timer1Reset( void ) {
-    timer1_elapsed_time = 0;        // reset counter parameters
-}
-
-
-void __attribute__ ( ( interrupt, no_auto_psv ) ) _T1Interrupt() {                                                      
-    timer1_elapsed_time++;
+void __attribute__ ( ( interrupt, no_auto_psv ) ) _T1Interrupt() {
+    timer1.counter++;
+    if ( timer1.counter >= timer1.countmax ){
+        timer1.counter = 0;
+        Timer1InterruptHandler();
+    }                                                     
     IFS0bits.T1IF = false;
 }
 
 
-void wait_ms( uint16_t duration_ms ){
-    Timer1Reset();
-    while (timer1_elapsed_time < duration_ms) {
-        // do nothing
-    }
+void Timer1SetInterruptHandler(void (* InterruptHandler)(void)){ 
+    IEC0bits.T1IE = false;
+    Timer1InterruptHandler = InterruptHandler; 
+    IEC0bits.T1IE = true;
 }
