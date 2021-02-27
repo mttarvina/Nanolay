@@ -264,14 +264,14 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 ### A. Overview
 
-The **Core** library features the backbone of all libraries that will be built in the future. This will contain all macro definitions and function API's for a basic microcontroller application.
+The **Core** library features the backbone of all libraries that will be built in the future. This will contain all macro definitions and custom APIs for a basic microcontroller application.
 
 | Feature                   | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ |
 | System Initialization     | Sets the system clock frequency, default GPIO and other peripheral states. Disables all peripheral modules by default |
-| GPIO Function APIs        | Used to set pin direction, pin states, and read from a pin   |
-| Timer1 Function APIs      | Used to implement a default timer based delay function       |
-| I/O Mapping Function APIs | [ *** to be implemented ]                                    |
+| GPIO Custom APIs          | Used to set pin direction, pin states, and read from a pin   |
+| Timer1 Custom APIs        | Used to implement a general purpose timer interrupt          |
+| I/O Mapping APIs          | [ *** to be implemented ]                                    |
 
 
 
@@ -298,10 +298,10 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 | Macro Variable | Value | Description                                                  |
 | -------------- | ----- | ------------------------------------------------------------ |
 | CLKOUTEN       | false | Set this to true if you want to look at the CLKOUT waveform at RB1 pin. Output signal frequency should be equal to FOSC/2 |
-| INPUT          | true  | Used in GPIO function APIs                                   |
-| OUTPUT         | false | Used in GPIO function APIs                                   |
-| LOW            | false | Used in GPIO function APIs                                   |
-| HIGH           | true  | Used in GPIO function APIs                                   |
+| INPUT          | true  | Used in GPIO custom APIs                                   |
+| OUTPUT         | false | Used in GPIO custom APIs                                   |
+| LOW            | false | Used in GPIO custom APIs                                   |
+| HIGH           | true  | Used in GPIO custom APIs                                   |
 
 
 
@@ -352,7 +352,7 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 
 
 
-### F. Core Function APIs
+### F. Core Custom APIs
 
 #### F.1. System
 
@@ -380,7 +380,7 @@ void ClockInit( void );
 // *****************************************************************************
 // @desc:       Disables all peripherals. User must manually enable a peripheral
 //                  in the main program before using peripheral specific
-//                  function APIs. This is called by SysInit()
+//                  custom APIs. This is called by SysInit()
 // @args:       None
 // @returns:    None
 // *****************************************************************************
