@@ -14,8 +14,8 @@
 
 ## 0. Wishlist
 
-* Add function API in Core library to enable Reference Oscillator Output and assign it to a specific output pin
-* Add function API in Core library to enable Input Change Notification on a specific GPIO pin
+* Add custom APIs in Core library to enable Reference Oscillator Output and assign it to a specific output pin
+* Add custom APIs in Core library to enable Input Change Notification on a specific GPIO pin
 
 
 
