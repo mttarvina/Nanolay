@@ -4,7 +4,7 @@
 // Author:          Mark Angelo Tarvina (mttarvina)
 // Email:           mttarvina@gmail.com
 // Revision:        1.0
-// Last Updated:    26.Feb.2021
+// Last Updated:    28.Feb.2021
 /* ************************************************************************** */
 
 #include "nanolay_core.h"
@@ -24,12 +24,7 @@
 #pragma config BSLIM = 8191         //Boot Segment Flash Page Address Limit bits->8191
 
 // FOSCSEL
-#if MASTER_CLK_4MHZ
-#pragma config FNOSC = FRCDIVN      //Oscillator Source Selection->Internal Fast RC (FRC) Oscillator with postscaler
-#else
 #pragma config FNOSC = FRC          //Oscillator Source Selection->FRC
-#endif
-
 #pragma config IESO = OFF           //Two-speed Oscillator Start-up Enable bit->Start up with user-selected oscillator source
 
 // FOSC
@@ -118,79 +113,76 @@ void SysInit( void ) {
 
 
 void ClockInit( void ){
-    if ( MASTER_CLK_4MHZ ){ 
-        CLKDIV = 0x3101;            // FRCDIV FRC/2; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x96;              // PLLFBDIV 150;
-        PLLDIV = 0x141;             // POST1DIV 1:4; VCODIV FVCO/3; POST2DIV 1:1; 
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1;
-        APLLFBD1 = 0x96;            // APLLFBDIV 150;  
-        APLLDIV1 = 0x141;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/3;
-    }    
-    if ( MASTER_CLK_8MHZ ){
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled; 
-        PLLFBD = 0x96;              // PLLFBDIV 150;
-        PLLDIV = 0x141;             // POST1DIV 1:4; VCODIV FVCO/3; POST2DIV 1:1; 
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1;
-        APLLFBD1 = 0x96;            // APLLFBDIV 150;  
-        APLLDIV1 = 0x141;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/3;    
+
+    switch ( MASTER_CLK ){
+        case _8MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled; 
+            PLLFBD = 0x96;              // PLLFBDIV 150;
+            PLLDIV = 0x141;             // POST1DIV 1:4; VCODIV FVCO/3; POST2DIV 1:1; 
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1;
+            APLLFBD1 = 0x96;            // APLLFBDIV 150;  
+            APLLDIV1 = 0x141;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/3;    
+            break;
+        case _16MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x64;              // PLLFBDIV 100;  
+            PLLDIV = 0x255;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:5;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+            APLLDIV1 = 0x255;           // APOST1DIV 1:5; APOST2DIV 1:5; AVCODIV FVCO/2;
+            break;
+        case _20MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x64;              // PLLFBDIV 100;  
+            PLLDIV = 0x254;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:4;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+            APLLDIV1 = 0x254;           // APOST1DIV 1:5; APOST2DIV 1:4; AVCODIV FVCO/2;        
+            break;
+        case _25MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x64;              // PLLFBDIV 100;  
+            PLLDIV = 0x244;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:4;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+            APLLDIV1 = 0x244;           // APOST1DIV 1:4; APOST2DIV 1:4; AVCODIV FVCO/2;        
+            break;
+        case _30MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x96;              // PLLFBDIV 150;  
+            PLLDIV = 0x154;             // POST1DIV 1:5; VCODIV FVCO/3; POST2DIV 1:4;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x96;            // APLLFBDIV 150;  
+            APLLDIV1 = 0x154;           // APOST1DIV 1:5; APOST2DIV 1:4; AVCODIV FVCO/3;        
+            break;
+        case _40MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x64;              // PLLFBDIV 100;  
+            PLLDIV = 0x252;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:2;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+            APLLDIV1 = 0x252;           // APOST1DIV 1:5; APOST2DIV 1:2; AVCODIV FVCO/2;        
+            break;
+        case _50MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x64;              // PLLFBDIV 100;  
+            PLLDIV = 0x242;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:2;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+            APLLDIV1 = 0x242;           // APOST1DIV 1:4; APOST2DIV 1:2; AVCODIV FVCO/2;        
+            break;
+        case _100MHZ:
+            CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
+            PLLFBD = 0x64;              // PLLFBDIV 100;  
+            PLLDIV = 0x241;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:1;
+            ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
+            APLLFBD1 = 0x64;            // APLLFBDIV 100;  
+            APLLDIV1 = 0x241;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/2;        
+            break;
+        default:
+            break;
     }
-    if ( MASTER_CLK_16MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x64;              // PLLFBDIV 100;  
-        PLLDIV = 0x255;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:5;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
-        APLLDIV1 = 0x255;           // APOST1DIV 1:5; APOST2DIV 1:5; AVCODIV FVCO/2;
-    }
-    if ( MASTER_CLK_20MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x64;              // PLLFBDIV 100;  
-        PLLDIV = 0x254;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:4;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
-        APLLDIV1 = 0x254;           // APOST1DIV 1:5; APOST2DIV 1:4; AVCODIV FVCO/2;
-    }
-    if ( MASTER_CLK_25MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x64;              // PLLFBDIV 100;  
-        PLLDIV = 0x244;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:4;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
-        APLLDIV1 = 0x244;           // APOST1DIV 1:4; APOST2DIV 1:4; AVCODIV FVCO/2;
-    }
-    if ( MASTER_CLK_30MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x96;              // PLLFBDIV 150;  
-        PLLDIV = 0x154;             // POST1DIV 1:5; VCODIV FVCO/3; POST2DIV 1:4;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x96;            // APLLFBDIV 150;  
-        APLLDIV1 = 0x154;           // APOST1DIV 1:5; APOST2DIV 1:4; AVCODIV FVCO/3;
-    }
-    if ( MASTER_CLK_40MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x64;              // PLLFBDIV 100;  
-        PLLDIV = 0x252;             // POST1DIV 1:5; VCODIV FVCO/2; POST2DIV 1:2;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
-        APLLDIV1 = 0x252;           // APOST1DIV 1:5; APOST2DIV 1:2; AVCODIV FVCO/2;
-    }
-    if ( MASTER_CLK_50MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x64;              // PLLFBDIV 100;  
-        PLLDIV = 0x242;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:2;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
-        APLLDIV1 = 0x242;           // APOST1DIV 1:4; APOST2DIV 1:2; AVCODIV FVCO/2;
-    }
-    if ( MASTER_CLK_100MHZ ){ 
-        CLKDIV = 0x3001;            // FRCDIV FRC/1; PLLPRE 1; DOZE 1:8; DOZEN disabled; ROI disabled;
-        PLLFBD = 0x64;              // PLLFBDIV 100;  
-        PLLDIV = 0x241;             // POST1DIV 1:4; VCODIV FVCO/2; POST2DIV 1:1;
-        ACLKCON1 = 0x101;           // APLLEN disabled; FRCSEL FRC; APLLPRE 1:1; 
-        APLLFBD1 = 0x64;            // APLLFBDIV 100;  
-        APLLDIV1 = 0x241;           // APOST1DIV 1:4; APOST2DIV 1:1; AVCODIV FVCO/2;
-    }
-    
+
     OSCTUN = 0x00;                  // TUN Center frequency;  
     REFOCONL = 0x00;                // ROEN disabled; ROSWEN disabled; ROSLP disabled; ROSEL FOSC; ROOUT disabled; ROSIDL disabled;
     REFOCONH = 0x00;                // RODIV 0; 
@@ -198,25 +190,19 @@ void ClockInit( void ){
     RPCON = 0x00;                   // IOLOCK disabled;
     PMDCON = 0x00;                  // PMDLOCK disabled;
 
-    if ( MASTER_CLK_4MHZ ){
-        // CF no clock failure; NOSC FRCDIV; CLKLOCK unlocked; OSWEN Switch is Complete; 
-        __builtin_write_OSCCONH((uint8_t) (0x07));
-        __builtin_write_OSCCONL((uint8_t) (0x00));
-    }
-    if ( MASTER_CLK_8MHZ ){
+    if ( MASTER_CLK == _8MHZ ){
         // CF no clock failure; NOSC FRC; CLKLOCK unlocked; OSWEN Switch is Complete; 
         __builtin_write_OSCCONH((uint8_t) (0x00));
         __builtin_write_OSCCONL((uint8_t) (0x00));        
     }
-    if ( MASTER_CLK_16MHZ || MASTER_CLK_20MHZ || MASTER_CLK_25MHZ || MASTER_CLK_30MHZ || MASTER_CLK_40MHZ || MASTER_CLK_50MHZ || MASTER_CLK_100MHZ ){
+    else {
         // CF no clock failure; NOSC FRCPLL; CLKLOCK unlocked; OSWEN Switch is Complete; 
         __builtin_write_OSCCONH((uint8_t) (0x01));
         __builtin_write_OSCCONL((uint8_t) (0x01));
         // Wait for Clock switch to occur
         while (OSCCONbits.OSWEN != 0);
         while (OSCCONbits.LOCK != 1);
-    }
-    
+    }    
     WDTCONLbits.ON = 0;             // Disable Watchdog Timer 
 }
 
@@ -531,49 +517,49 @@ static TMR1_OBJ timer1;
 
 void (*Timer1InterruptHandler)(void) = NULL;
 
-void Timer1Init( uint16_t duration_ms ) {    
+void Timer1Init( uint16_t interval ) {    
     PMD1bits.T1MD = 0;              // enable TIMER1 peripheral
     IPC0bits.T1IP = TMR1_PRIORITY;  // Set TIMER1 Interrupt Priority
     
     TMR1 = 0x00;                    // Clear TMR1 register; 
-    if ( MASTER_CLK_4MHZ ) {
-        PR1 = TMR1_PERIOD_4MHZ;
-    }
-    if ( MASTER_CLK_8MHZ ) {
-        PR1 = TMR1_PERIOD_8MHZ;
-    }
-    if ( MASTER_CLK_16MHZ ) {
-        PR1 = TMR1_PERIOD_16MHZ;
-    }
-    if ( MASTER_CLK_20MHZ ) {
-        PR1 = TMR1_PERIOD_20MHZ;
-    }
-    if ( MASTER_CLK_25MHZ ) {
-        PR1 = TMR1_PERIOD_25MHZ;
-    }
-    if ( MASTER_CLK_30MHZ ) {
-        PR1 = TMR1_PERIOD_30MHZ;
-    }
-    if ( MASTER_CLK_40MHZ ) {
-        PR1 = TMR1_PERIOD_40MHZ;
-    }
-    if ( MASTER_CLK_50MHZ ) {
-        PR1 = TMR1_PERIOD_50MHZ;
-    }
-    if ( MASTER_CLK_100MHZ ) {
-        PR1 = TMR1_PERIOD_100MHZ;
-    }
-    T1CON = 0x0000;                 // TCKPS 1:1; PRWIP Write complete; TMWIP Write complete; TON disabled; TSIDL disabled; TCS External; TECS FOSC; TSYNC disabled; TMWDIS disabled; TGATE disabled; 
 
-    timer1.counter = 0;
-    timer1.countmax = duration_ms;
+    switch ( MASTER_CLK ) {
+        case _8MHZ:
+            PR1 = PERIOD_1MS_8MHZ;
+            break;
+        case _16MHZ:
+            PR1 = PERIOD_1MS_16MHZ;
+            break;
+        case _20MHZ:
+            PR1 = PERIOD_1MS_20MHZ;
+            break;
+        case _25MHZ:
+            PR1 = PERIOD_1MS_25MHZ;
+            break;
+        case _30MHZ:
+            PR1 = PERIOD_1MS_30MHZ;
+            break;
+        case _40MHZ:
+            PR1 = PERIOD_1MS_40MHZ;
+            break;
+        case _50MHZ:
+            PR1 = PERIOD_1MS_50MHZ;
+            break;
+        case _100MHZ:
+            PR1 = PERIOD_1MS_100MHZ;
+            break;
+        default:
+            break;
+    }
+    T1CON = 0x0000;
+    timer1.countmax = interval;
 }
 
 
 void Timer1Start( void ) {
     timer1.counter = 0;
-    IEC0bits.T1IE = true;           // Enable Timer1 interrupt
     IFS0bits.T1IF = false;          // Reset Timer1 interrupt flag
+    IEC0bits.T1IE = true;           // Enable Timer1 interrupt
     T1CONbits.TON = true;           // Enabled Timer1
 }
 
@@ -585,12 +571,12 @@ void Timer1Stop( void ) {
 
 
 void __attribute__ ( ( interrupt, no_auto_psv ) ) _T1Interrupt() {
+    IFS0bits.T1IF = false;
     timer1.counter++;
     if ( timer1.counter >= timer1.countmax ){
         timer1.counter = 0;
         Timer1InterruptHandler();
     }                                                     
-    IFS0bits.T1IF = false;
 }
 
 
@@ -598,4 +584,125 @@ void Timer1SetInterruptHandler(void (* InterruptHandler)(void)){
     IEC0bits.T1IE = false;
     Timer1InterruptHandler = InterruptHandler; 
     IEC0bits.T1IE = true;
+}
+
+
+// *****************************************************************************
+// SCCP1 Functions
+// *****************************************************************************
+
+static SCCP1_OBJ sccp1;
+
+void SCCP1Init( void ){
+    PMD2bits.CCP1MD = 0;    // enable SCCP1 peripheral
+
+    IPC1bits.CCP1IP = SCCP1_PRIORITY;
+    IPC1bits.CCT1IP = SCCP1_PRIORITY;
+
+    // CCPON disabled; MOD 16-Bit/32-Bit Timer; CCSEL disabled; CCPSIDL disabled; T32 16 Bit; CCPSLP disabled; TMRPS 1:1; CLKSEL FOSC/2; TMRSYNC disabled; 
+    CCP1CON1L = (0x00 & 0x7FFF); //Disabling CCPON bit
+    //RTRGEN disabled; ALTSYNC disabled; ONESHOT disabled; TRIGEN disabled; OPS Each Time Base Period Match; SYNC None; OPSSRC Timer Interrupt Event; 
+    CCP1CON1H = 0x00;
+    //ASDGM disabled; SSDG disabled; ASDG 0; PWMRSEN disabled; 
+    CCP1CON2L = 0x00;
+    //ICGSM Level-Sensitive mode; ICSEL IC1; AUXOUT Disabled; OCAEN disabled; OENSYNC disabled; 
+    CCP1CON2H = 0x00;
+    //OETRIG disabled; OSCNT None; POLACE disabled; PSSACE Tri-state; 
+    CCP1CON3H = 0x00;
+    //ICDIS disabled; SCEVT disabled; TRSET disabled; ICOV disabled; ASEVT disabled; ICGARM disabled; TRCLR disabled; 
+    CCP1STATL = 0x00;
+    CCP1TMRL = 0x00;    //TMR 0; 
+    CCP1TMRH = 0x00;    //TMR 0;
+
+    switch ( MASTER_CLK ) {
+        case _8MHZ:
+            CCP1PRL = PERIOD_1MS_8MHZ;
+            CCP1PRH = PERIOD_1MS_8MHZ;
+            break;
+        case _16MHZ:
+            CCP1PRL = PERIOD_1MS_16MHZ;
+            CCP1PRH = PERIOD_1MS_16MHZ;
+            break;
+        case _20MHZ:
+            CCP1PRL = PERIOD_1MS_20MHZ;
+            CCP1PRH = PERIOD_1MS_20MHZ;
+            break;
+        case _25MHZ:
+            CCP1PRL = PERIOD_1MS_25MHZ;
+            CCP1PRH = PERIOD_1MS_25MHZ;
+            break;
+        case _30MHZ:
+            CCP1PRL = PERIOD_1MS_30MHZ;
+            CCP1PRH = PERIOD_1MS_30MHZ;
+            break;
+        case _40MHZ:
+            CCP1PRL = PERIOD_1MS_40MHZ;
+            CCP1PRH = PERIOD_1MS_40MHZ;
+            break;
+        case _50MHZ:
+            CCP1PRL = PERIOD_1MS_50MHZ;
+            CCP1PRH = PERIOD_1MS_50MHZ;
+            break;
+        case _100MHZ:
+            CCP1PRL = PERIOD_1MS_100MHZ;
+            CCP1PRH = PERIOD_1MS_100MHZ;
+            break;
+        default:
+            break;
+    }
+     
+    CCP1RA = 0x00;      //CMP 0; 
+    CCP1RB = 0x00;      //CMP 0;
+    CCP1BUFL = 0x00;    //BUF 0; 
+    CCP1BUFH = 0x00;    //BUF 0; 
+}
+
+
+void SCCP1Start( void ){
+    sccp1.wait_counter = 0;
+    sccp1.millis_counter = 0;
+
+    IFS0bits.CCP1IF = false;
+    IFS0bits.CCT1IF = false;
+    IEC0bits.CCP1IE = true;
+    IEC0bits.CCT1IE = true;
+
+    CCP1CON1Lbits.CCPON = true;
+}
+
+
+void SCCP1Stop( void ){
+    IEC0bits.CCP1IE = false;
+    IEC0bits.CCT1IE = false;
+
+    CCP1CON1Lbits.CCPON = false;
+}
+
+
+void __attribute__ ( ( interrupt, no_auto_psv ) ) _CCT1Interrupt ( void ){
+    IFS0bits.CCT1IF = false;
+    sccp1.wait_counter++;
+    if ( sccp1.wait_counter >= 0xFFFD ){
+        sccp1.wait_counter = 0;
+    }
+}
+
+
+void __attribute__ ( ( interrupt, no_auto_psv ) ) _CCP1Interrupt ( void ){
+    IFS0bits.CCP1IF = false;
+    sccp1.millis_counter++;
+}
+
+
+void wait_ms( uint16_t duration ){
+    sccp1.wait_counter = 0;
+    while (sccp1.wait_counter < duration ){
+        // do nothing
+    }
+
+}
+
+
+unsigned long long millis( void ){
+    return sccp1.millis_counter;
 }

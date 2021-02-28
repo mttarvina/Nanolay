@@ -4,33 +4,29 @@
 // Author:          Mark Angelo Tarvina (mttarvina)
 // Email:           mttarvina@gmail.com
 // Revision:        1.0
-// Last Updated:    26.Feb.2021
+// Last Updated:    28.Feb.2021
 /* ************************************************************************** */
 #include "nanolay/nanolay_core.h"
 
-
+#define TOGGLE_RATE 50              // 50ms
 uint8_t LedPin = PB2;
-
-
-void Timer1CallBack(void);                      // User defined interrupt callback function
+unsigned long long timestamp = 0;
 
 int main(void) {
     SysInit();
-
-    Timer1Init(50);                             // Set interrupt interval to 50ms
-    Timer1SetInterruptHandler(&Timer1CallBack); // assign callback function as interrupt handler
-    Timer1Start();
-    
+ 
     DigitalSetPin(LedPin, OUTPUT);
-
+    
+    SCCP1Init();
+    SCCP1Start();
+    
+    timestamp = millis();
+    
     while (true) {
-        // do nothing here
+        if ( millis() - timestamp >= TOGGLE_RATE ){
+            timestamp = millis();
+            Toggle(LedPin);
+        }
     }
     return 0;
-}
-
-
-void __attribute__ ((weak)) Timer1CallBack(void){
-    //  interrupt routine, should be kept short
-    Toggle(LedPin);
 }

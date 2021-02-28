@@ -4,7 +4,7 @@
 // Author:          Mark Angelo Tarvina (mttarvina)
 // Email:           mttarvina@gmail.com
 // Revision:        1.0
-// Last Updated:    26.Feb.2021
+// Last Updated:    28.Feb.2021
 /* ************************************************************************** */
 
 
@@ -17,17 +17,17 @@
 #include <stdio.h>
 
 
-// User needs to set one of these macros to change Fosc
-#define MASTER_CLK_4MHZ         true
-#define MASTER_CLK_8MHZ         false
-#define MASTER_CLK_16MHZ        false
-#define MASTER_CLK_20MHZ        false
-#define MASTER_CLK_25MHZ        false
-#define MASTER_CLK_30MHZ        false
-#define MASTER_CLK_40MHZ        false
-#define MASTER_CLK_50MHZ        false
-#define MASTER_CLK_100MHZ       false
+#define _8MHZ                   8000000UL
+#define _16MHZ                  16000000UL
+#define _20MHZ                  20000000UL
+#define _25MHZ                  25000000UL
+#define _30MHZ                  30000000UL
+#define _40MHZ                  40000000UL
+#define _50MHZ                  50000000UL
+#define _100MHZ                 100000000UL
 
+// Set the system clock frequency here
+#define MASTER_CLK              _8MHZ
 // Enables Fosc/2 output at RB1 pin
 #define CLKOUTEN                false            
 
@@ -60,17 +60,17 @@
 #define PB14                    0x14
 #define PB15                    0x15
 
-// Timer1 constants
+// Timer1 and SCCP1 constants
 #define TMR1_PRIORITY           0x04
-#define TMR1_PERIOD_4MHZ        0x07CF  // 1ms
-#define TMR1_PERIOD_8MHZ        0x0F9F  // 1ms
-#define TMR1_PERIOD_16MHZ       0x1F3F  // 1ms
-#define TMR1_PERIOD_20MHZ       0x270F  // 1ms
-#define TMR1_PERIOD_25MHZ       0x30D3  // 1ms
-#define TMR1_PERIOD_30MHZ       0x3A97  // 1ms
-#define TMR1_PERIOD_40MHZ       0x4E1F  // 1ms
-#define TMR1_PERIOD_50MHZ       0x61A7  // 1ms
-#define TMR1_PERIOD_100MHZ      0xC34F  // 1ms
+#define SCCP1_PRIORITY          0x05
+#define PERIOD_1MS_8MHZ         0x0F9F  // 1ms
+#define PERIOD_1MS_16MHZ        0x1F3F  // 1ms
+#define PERIOD_1MS_20MHZ        0x270F  // 1ms
+#define PERIOD_1MS_25MHZ        0x30D3  // 1ms
+#define PERIOD_1MS_30MHZ        0x3A97  // 1ms
+#define PERIOD_1MS_40MHZ        0x4E1F  // 1ms
+#define PERIOD_1MS_50MHZ        0x61A7  // 1ms
+#define PERIOD_1MS_100MHZ       0xC34F  // 1ms
 
 
 // custom struct definition for Timer1
@@ -78,6 +78,13 @@ typedef struct _TMR1_OBJ_STRUCT{
     volatile uint16_t   counter;
     volatile uint16_t   countmax;
 } TMR1_OBJ;
+
+
+// custom struct definition for SCCP1
+typedef struct _SCCP1_TMR_OBJ_STRUCT{
+    volatile uint16_t           wait_counter;
+    volatile unsigned long long millis_counter;
+} SCCP1_OBJ;
 
 
 // *****************************************************************************
@@ -157,15 +164,14 @@ void Toggle( uint8_t pin );
 
 // *****************************************************************************
 // @desc:       Enable Timer1 peripheral, initialize registers and set interval
-// @args:       duration_ms [uint16_t]: User defined interrupt interval in ms
+// @args:       interval [uint16_t]: User defined interrupt interval in ms
 // @returns:    None
 // *****************************************************************************
-void Timer1Init( uint16_t duration_ms );
+void Timer1Init( uint16_t interval );
 
 
 // *****************************************************************************
 // @desc:       Start Timer1, enable interrupt, clear interrupt flag
-//                  Internally called by Timer1Init()
 // @args:       None
 // @returns:    None
 // *****************************************************************************
@@ -188,5 +194,45 @@ void Timer1Stop( void );
 // *****************************************************************************
 void Timer1SetInterruptHandler(void (* InterruptHandler)(void));
 
+
+// *****************************************************************************
+// @desc:       Initializa SCCP1 to use wait_ms() and millis() functions
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SCCP1Init( void );
+
+
+// *****************************************************************************
+// @desc:       Start SCCP1 timer, enable interrupts
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SCCP1Start( void );
+
+
+// *****************************************************************************
+// @desc:       Stop SCCP1 timer, disable interrupt
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SCCP1Stop( void );
+
+
+// *****************************************************************************
+// @desc:       Wait for a specified duration in ms
+// @args:       duration [uint16_t]: wait duration in ms
+// @returns:    None
+// *****************************************************************************
+void wait_ms( uint16_t duration );
+
+
+// *****************************************************************************
+// @desc:       Returns the value of millisecond counter since SCCP1 timer was
+//                  started.
+// @args:       None
+// @returns:    [unsigned long long]: value of millisecond counter
+// *****************************************************************************
+unsigned long long millis( void );
 
 #endif // _NANOLAY_CORE_H

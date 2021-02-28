@@ -14,8 +14,8 @@
 
 ## 0. Wishlist
 
-* Add custom APIs in Core library to enable Reference Oscillator Output and assign it to a specific output pin
-* Add custom APIs in Core library to enable Input Change Notification on a specific GPIO pin
+* Add function API in Core library to enable Reference Oscillator Output and assign it to a specific output pin
+* Add function API in Core library to enable Input Change Notification on a specific GPIO pin
 
 
 
@@ -199,9 +199,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 | Parameter                   | Value                              | Description                                                  |
 | --------------------------- | ---------------------------------- | ------------------------------------------------------------ |
 | Clock Source                | FRC Oscillator                     | [Default] 8MHz nominal                                       |
-| FRC Postscaler (4MHz)       | Enabled                            | Postscaler = 1:2                                             |
-| FRC Postscaler (f >= 8MHz)  | Disabled                           | Postscaler = 1:1                                             |
-| PLL (4MHz)                  | Disabled                           | Prescaler = 1:1, Feedback = 1:150, Postscaler1 = 1:4, Postscaler2 = 1:1 |
+| FRC Postscaler              | Disabled                           | Postscaler = 1:1                                             |
 | PLL (8MHz)                  | Disabled                           | Prescaler = 1:1, Feedback = 1:150, Postscaler1 = 1:4, Postscaler2 = 1:1 |
 | PLL (16MHz)                 | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:5, Postscaler2 = 1:5 |
 | PLL (20MHz)                 | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:5, Postscaler2 = 1:4 |
@@ -212,7 +210,6 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 | PLL (100MHz)                | Enabled                            | Prescaler = 1:1, Feedback = 1:100, Postscaler1 = 1:4, Postscaler2 = 1:1 |
 | Auxiliary Clock             | Disabled                           | Default unless otherwise required later, APLL still use the same setting as the PLL, even though it is disabled |
 | Clock Output Pin Config     | OSC2 as GPIO                       | [Default] OSC2 as CLK Output for demo/debug                  |
-| VCO Divider (4MHz)          | FVCO/3                             | Target is 400MHz                                             |
 | VCO Divider (8MHz)          | FVCO/3                             | Target is 400MHz                                             |
 | VCO Divider (16MHz)         | FVCO/2                             | Target is 400MHz                                             |
 | VCO Divider (20MHz)         | FVCO/2                             | Target is 400MHz                                             |
@@ -233,26 +230,47 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 ### B. Timer1 Module
 
-| Parameter              | Value            | Description                                |
-| ---------------------- | ---------------- | ------------------------------------------ |
-| Enable TMR             | ENABLED          |                                            |
-| Clock Source           | FOSC/2           |                                            |
-| Prescaler              | 1:1              |                                            |
-| Synchronize Clock      | DISABLED/Not set |                                            |
-| Enable Timer Interrupt | ENABLED          |                                            |
-| Timer Period           | 1 ms             |                                            |
-| Period Count (4MHz)    | 0x07CF           | Target is 1 ms                             |
-| Period Count (8MHz)    | 0x0F9F           | Target is 1 ms                             |
-| Period Count (16MHz)   | 0x1F3F           | Target is 1 ms                             |
-| Period Count (20MHz)   | 0x270F           | Target is 1 ms                             |
-| Period Count (25MHz)   | 0x30D3           | Target is 1 ms                             |
-| Period Count (30MHz)   | 0x3A97           | Target is 1 ms                             |
-| Period Count (40MHz)   | 0x4E1F           | Target is 1 ms                             |
-| Period Count (50MHz)   | 0x61A7           | Target is 1 ms                             |
-| Period Count (100MHz)  | 0xC34F           | Target is 1 ms                             |
-| Callback Function Rate | 0x1              | Effective Timer Period = (1 x 1 ms) = 1 ms |
+| Parameter                             | Value            | Description    |
+| ------------------------------------- | ---------------- | -------------- |
+| Enable TMR                            | ENABLED          |                |
+| Clock Source (Resolution = ms)        | FOSC/2           |                |
+| Prescaler                             | 1:1              |                |
+| Synchronize Clock                     | DISABLED/Not set |                |
+| Enable Timer Interrupt                | ENABLED          |                |
+| Timer Period                          | 1 ms             |                |
+| Period Count (8MHz), 1ms resolution   | 0x0F9F           | Target is 1 ms |
+| Period Count (16MHz), 1ms resolution  | 0x1F3F           | Target is 1 ms |
+| Period Count (20MHz), 1ms resolution  | 0x270F           | Target is 1 ms |
+| Period Count (25MHz), 1ms resolution  | 0x30D3           | Target is 1 ms |
+| Period Count (30MHz), 1ms resolution  | 0x3A97           | Target is 1 ms |
+| Period Count (40MHz), 1ms resolution  | 0x4E1F           | Target is 1 ms |
+| Period Count (50MHz), 1ms resolution  | 0x61A7           | Target is 1 ms |
+| Period Count (100MHz), 1ms resolution | 0xC34F           | Target is 1 ms |
+| Callback Function Rate                | 0x1              |                |
 
 
+
+### C. SCCP1 Module
+
+| Parameter               | Value                       | Description |
+| ----------------------- | --------------------------- | ----------- |
+| Mode Selection          | Timer                       |             |
+| Enabled MCCP            | DISABLED/Not set            |             |
+| Enable MCCP Interrupt   | ENABLED                     |             |
+| Clock Source            | FOSC/2                      |             |
+| Prescaler               | 1:1                         |             |
+| Timer Mode              | 16 bit                      |             |
+| Primary Timer Period    | Same as Timer1              |             |
+| Secondary Timer Period  | Same as Timer1              |             |
+| Output                  | Timer Interrupt Event       |             |
+| Event Duration          | Each Time Base Period Match |             |
+| Auxiliary Output        | DISABLED                    |             |
+| Trigger Enable          | DISABLED                    |             |
+| Retrigger Enable        | DISABLED                    |             |
+| One-Shot Trigger Enable | DISABLED                    |             |
+| Alternate Sync Source   | DISABLED                    |             |
+| Synchronization Source  | None                        |             |
+| One Shot Duration       | None                        |             |
 
 
 
@@ -264,14 +282,14 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 ### A. Overview
 
-The **Core** library features the backbone of all libraries that will be built in the future. This will contain all macro definitions and custom APIs for a basic microcontroller application.
+The **Core** library features the backbone of all libraries that will be built in the future. This will contain all macro definitions and function API's for a basic microcontroller application.
 
 | Feature                   | Description                                                  |
 | ------------------------- | ------------------------------------------------------------ |
 | System Initialization     | Sets the system clock frequency, default GPIO and other peripheral states. Disables all peripheral modules by default |
-| GPIO Custom APIs          | Used to set pin direction, pin states, and read from a pin   |
-| Timer1 Custom APIs        | Used to implement a general purpose timer interrupt          |
-| I/O Mapping APIs          | [ *** to be implemented ]                                    |
+| GPIO Function APIs        | Used to set pin direction, pin states, and read from a pin   |
+| Timer1 Function APIs      | Used to implement a default timer based delay function       |
+| I/O Mapping Function APIs | [ *** to be implemented ]                                    |
 
 
 
@@ -279,17 +297,17 @@ The **Core** library features the backbone of all libraries that will be built i
 
 Set one of these macro variables to **true** to set the master clock frequency. This corresponds to the value of FOSC. There should only be one of these variables set to **true**.
 
-| Macro Variable    | Value | Description |
-| ----------------- | ----- | ----------- |
-| MASTER_CLK_4MHZ   | true  | [Default]   |
-| MASTER_CLK_8MHZ   | false |             |
-| MASTER_CLK_16MHZ  | false |             |
-| MASTER_CLK_20MHZ  | false |             |
-| MASTER_CLK_25MHZ  | false |             |
-| MASTER_CLK_30MHZ  | false |             |
-| MASTER_CLK_40MHZ  | false |             |
-| MASTER_CLK_50MHZ  | false |             |
-| MASTER_CLK_100MHZ | false |             |
+| Macro Variable | Value                        | Description |
+| -------------- | ---------------------------- | ----------- |
+| _8MHZ          | 8000000UL                    |             |
+| _16MHZ         | 16000000UL                   |             |
+| _20MHZ         | 20000000UL                   |             |
+| _25MHZ         | 25000000UL                   |             |
+| _30MHZ         | 30000000UL                   |             |
+| _40MHZ         | 40000000UL                   |             |
+| _50MHZ         | 50000000UL                   |             |
+| _100MHZ        | 100000000UL                  |             |
+| MASTER_CLK     | Choose from any of the above |             |
 
 
 
@@ -298,10 +316,10 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 | Macro Variable | Value | Description                                                  |
 | -------------- | ----- | ------------------------------------------------------------ |
 | CLKOUTEN       | false | Set this to true if you want to look at the CLKOUT waveform at RB1 pin. Output signal frequency should be equal to FOSC/2 |
-| INPUT          | true  | Used in GPIO custom APIs                                   |
-| OUTPUT         | false | Used in GPIO custom APIs                                   |
-| LOW            | false | Used in GPIO custom APIs                                   |
-| HIGH           | true  | Used in GPIO custom APIs                                   |
+| INPUT          | true  | Used in GPIO function APIs                                   |
+| OUTPUT         | false | Used in GPIO function APIs                                   |
+| LOW            | false | Used in GPIO function APIs                                   |
+| HIGH           | true  | Used in GPIO function APIs                                   |
 
 
 
@@ -335,24 +353,24 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 
 
 
-### E. Timer1 Macro Definitions
+### E. Timer1 and SCCP1 Macro Definitions
 
-| Macro Variable     | Value  | Description                       |
-| ------------------ | ------ | --------------------------------- |
-| TMR1_PRIORITY      | 0x04   | Can be any value from 0x01 - 0x07 |
-| TMR1_PERIOD_4MHZ   | 0x07CF | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_8MHZ   | 0x0F9F | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_16MHZ  | 0x1F3F | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_20MHZ  | 0x270F | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_25MHZ  | 0x30D3 | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_30MHZ  | 0x3A97 | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_40MHZ  | 0x4E1F | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_50MHZ  | 0x61A7 | [1ms / (2 * FOSC_PERIOD)] - 1     |
-| TMR1_PERIOD_100MHZ | 0xC34F | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| Macro Variable    | Value  | Description                       |
+| ----------------- | ------ | --------------------------------- |
+| TMR1_PRIORITY     | 0x04   | Can be any value from 0x01 - 0x07 |
+| SCCP1_PRIORITY    | 0x05   | Can be any value from 0x01 - 0x07 |
+| PERIOD_1MS_8MHZ   | 0x0F9F | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_16MHZ  | 0x1F3F | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_20MHZ  | 0x270F | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_25MHZ  | 0x30D3 | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_30MHZ  | 0x3A97 | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_40MHZ  | 0x4E1F | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_50MHZ  | 0x61A7 | [1ms / (2 * FOSC_PERIOD)] - 1     |
+| PERIOD_1MS_100MHZ | 0xC34F | [1ms / (2 * FOSC_PERIOD)] - 1     |
 
 
 
-### F. Core Custom APIs
+### F. Core Function APIs
 
 #### F.1. System
 
@@ -380,7 +398,7 @@ void ClockInit( void );
 // *****************************************************************************
 // @desc:       Disables all peripherals. User must manually enable a peripheral
 //                  in the main program before using peripheral specific
-//                  custom APIs. This is called by SysInit()
+//                  function APIs. This is called by SysInit()
 // @args:       None
 // @returns:    None
 // *****************************************************************************
@@ -438,18 +456,25 @@ void Toggle( uint8_t pin );
 #### F.2. Timing and delay
 
 ``` C
+// custom struct definition for Timer1
+typedef struct _TMR1_OBJ_STRUCT{
+    volatile uint16_t   counter;
+    volatile uint16_t   countmax;
+} TMR1_OBJ;
+```
+
+``` C
 // *****************************************************************************
 // @desc:       Enable Timer1 peripheral, initialize registers and set interval
-// @args:       duration_ms [uint16_t]: User defined interrupt duration in ms
+// @args:       interval [uint16_t]: User defined interrupt interval in ms
 // @returns:    None
 // *****************************************************************************
-void Timer1Init( uint16_t duration_ms );
+void Timer1Init( uint16_t interval );
 ```
 
 ``` C
 // *****************************************************************************
 // @desc:       Start Timer1, enable interrupt, clear interrupt flag
-//                  Internally called by Timer1Init()
 // @args:       None
 // @returns:    None
 // *****************************************************************************
@@ -477,9 +502,67 @@ void Timer1SetInterruptHandler(void (* InterruptHandler)(void));
 
 
 
+``` C
+// custom struct definition for SCCP1
+typedef struct _SCCP1_TMR_OBJ_STRUCT{
+    volatile uint16_t           wait_counter;
+    volatile unsigned long long millis_counter;
+} SCCP1_OBJ;
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Initializa SCCP1 to use wait_ms() and millis() functions
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SCCP1Init( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Start SCCP1 timer, enable interrupts
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SCCP1Start( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Stop SCCP1 timer, disable interrupt
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void SCCP1Stop( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Wait for a specified duration in ms
+// @args:       duration [uint16_t]: wait duration in ms
+// @returns:    None
+// *****************************************************************************
+void wait_ms( uint16_t duration );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Returns the value of millisecond counter since SCCP1 timer was
+//                  started.
+// @args:       None
+// @returns:    [unsigned long long]: value of millisecond counter
+// *****************************************************************************
+unsigned long long millis( void );
+```
+
+
+
 ### G. Sample Codes
 
-#### G.1. Toggle pin RB2 every 50ms, non-blocking, using the general purpose timer interrupt API
+#### G.1. Toggle pin using the general purpose Timer1 Interrupt
+
+This sample code uses the Timer1 peripheral to create a custom interrupt routine triggered every 50ms. This is useful when you have an event that should be triggered on a specific interval that is non-blocking, and does not need of too much code intervention. The interrupt interval can be set as an argument of Timer1Init() with a resolution of 1ms. We then assign a custom defined function to act as the interrupt service routine. There is no need to clear interrupt flags in our custom defined ISR, the API handles this internally. Timer1Start() is called to start the interrupt timer.
 
 Main program code:
 
@@ -488,16 +571,16 @@ Main program code:
 
 uint8_t LedPin = PB2;
 
-void Timer1CallBack(void);                      // User defined interrupt callback function
+void Timer1CallBack(void);                      // Define our custom callback function
 
 int main(void) {
     SysInit();
 
-    Timer1Init(50);                             // Set interrupt interval to 50ms
+    DigitalSetPin(LedPin, OUTPUT);
+    
+    Timer1Init(50);                    			// Set interrupt interval to 50ms
     Timer1SetInterruptHandler(&Timer1CallBack); // assign callback function as interrupt handler
     Timer1Start();
-    
-    DigitalSetPin(LedPin, OUTPUT);
 
     while (true) {
         // do nothing here
@@ -511,7 +594,73 @@ void __attribute__ ((weak)) Timer1CallBack(void){
 }
 ```
 
- Waveform @ RB2:
+
+
+#### G.2. Toggle pin using a blocking delay function
+
+This sample code uses the SCCP1 peripheral to toggle a pin every 50ms. This is a blocking function similar to delay() in Arduino.
+
+``` C
+#include "nanolay/nanolay_core.h"
+
+uint8_t LedPin = PB2;
+
+int main(void) {
+    SysInit();
+
+    DigitalSetPin(LedPin, OUTPUT);
+
+    SCCP1Init();
+    SCCP1Start();
+
+    while (true) {
+        Toggle(LedPin);
+        wait_ms(50);
+    }
+    return 0;
+}
+```
+
+
+
+#### G.3. Toggle a pin using a non blocking millis() function
+
+This sample code still uses the SCCP1 peripheral to toggle a pin every 50ms. This is similar to the millis() function in Arduino.
+
+``` C
+#include "nanolay/nanolay_core.h"
+
+#define TOGGLE_RATE 50              // 50ms
+
+uint8_t LedPin = PB2;
+
+unsigned long long timestamp = 0;
+
+int main(void) {
+    SysInit();
+ 
+    DigitalSetPin(LedPin, OUTPUT);
+    
+    SCCP1Init();
+    SCCP1Start();
+    
+    timestamp = millis();
+    
+    while (true) {
+        if ( millis() - timestamp >= TOGGLE_RATE ){
+            timestamp = millis();
+            Toggle(LedPin);
+        }
+    }
+    return 0;
+}
+```
+
+
+
+#### G.4 Expected Waveform at RB2
+
+Using any of the sample codes mentioned above should output the following waveform on pin RB2
 
 ![wait_50ms](docs/img/wait_50ms.png)
 
@@ -530,16 +679,8 @@ The following series of scopeshots were taken from RB1 pin setting OSC2 as CLKOU
 ``` C
 // file: nanolay_core.h
 
-// User needs to set one of these macros to change Fosc
-#define MASTER_CLK_4MHZ         true
-#define MASTER_CLK_8MHZ         false
-#define MASTER_CLK_16MHZ        false
-#define MASTER_CLK_20MHZ        false
-#define MASTER_CLK_25MHZ        false
-#define MASTER_CLK_30MHZ        false
-#define MASTER_CLK_40MHZ        false
-#define MASTER_CLK_50MHZ        false
-#define MASTER_CLK_100MHZ       false
+// Set the system clock frequency here
+#define MASTER_CLK              _8MHZ
 
 // Enables Fosc/2 output at RB1 pin
 #define CLKOUTEN                true        
@@ -616,31 +757,3 @@ int main(void) {
 NOTE: The BW of my oscilloscope is only 100MHz. I'm getting the correct frequency, but not sure about the shape of the waveform.
 
 ![100mhz_clkout](docs/img/100mhz_clkout.png)
-
-
-
-
-
-### B. Sample waveform of wait_ms() function
-
-The argument here is set to 1 ms, which is the minimum allowable value. This waveform is taken at pin RB2, using the code below:
-
-``` C
-#include "nanolay/nanolay_core.h"
-
-int main(void) {
-    SysInit();
-    Timer1Init();
-    DigitalSetPin(PB2, OUTPUT);
-    
-    while (true) {
-        DigitalDrvPin(PB2, HIGH);
-        wait_ms(1);
-        DigitalDrvPin(PB2, LOW);
-        wait_ms(1);
-    }
-    return 0;
-}
-```
-
-![wait_1ms](docs/img/wait_1ms.png)
