@@ -5,3 +5,4 @@ debug/
 dist/
 nbproject/
 Makefile
+script.py

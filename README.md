@@ -1,23 +1,26 @@
-# *Nanolay* : Collection of Custom dsPIC33CK Library
+# Custom dsPIC33CK Library: *Nanolay Core*
 
-| Parameter         | Value                           |
-| ----------------- | ------------------------------- |
-| Revision          | A                               |
-| Target Device     | DSPIC33CK256MP202               |
-| Development Board | Nanolay RevA                    |
-| Author            | Mark Angelo Tarvina (mttarvina) |
-| Email             | mttarvina@gmail.com             |
+> **Tags: Embedded, dsPIC33, Embedded C, MPLAB**
 
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+>Author: Mark Angelo Tarvina (tarvs)
+>
+>Email: mttarvina@gmail.com
+>
+>Date Published:
+>
+>Last Updated: 
 
+---
 
+## 0. Overview
 
-## 0. Wishlist
+| Parameter         | Value             |
+| ----------------- | ----------------- |
+| Version           | 1.0               |
+| Target Device     | dsPIC33CK256MP202 |
+| Development Board | Nanolay RevA      |
 
-* Add function API in Core library to enable Reference Oscillator Output and assign it to a specific output pin
-* Add function API in Core library to enable Input Change Notification on a specific GPIO pin
-
-
+ 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -149,48 +152,7 @@ To configure Timer mode:
 
 
 
-## II. Important Notes
-
-### A. Measured Current Consumption vs MASTER_CLK Frequency
-
-This is a series of current measurements using Nanolay RevA board. The main program code is shown below:
-
-``` C
-#include "nanolay/nanolay_core.h"
-
-int main(void) {
-    SysInit();
-    
-    while (true) {
-        // do nothing
-    }
-    return 0;
-}
-```
-
-
-
-| MASTER_CLK | CLKOUTEN | GPIO Default Setting | Current Consumption |
-| ---------- | -------- | -------------------- | ------------------- |
-| 4MHz       | true     | OUTPUT, Drive LOW    | 22.7mA              |
-| 4MHz       | false    | OUTPUT, Drive LOW    | 22.5mA              |
-| 4MHz       | false    | INPUT                | 22.4mA              |
-| 8MHz       | true     | OUTPUT, Drive LOW    | 23.8mA              |
-| 16MHz      | true     | OUTPUT, Drive LOW    | 27.9mA              |
-| 20MHz      | true     | OUTPUT, Drive LOW    | 28.3mA              |
-| 25MHz      | true     | OUTPUT, Drive LOW    | 28.9mA              |
-| 30MHz      | true     | OUTPUT, Drive LOW    | 31.1mA              |
-| 40MHz      | true     | OUTPUT, Drive LOW    | 31.1mA              |
-| 50MHz      | true     | OUTPUT, Drive LOW    | 32.5mA              |
-| 100MHz     | true     | OUTPUT, Drive LOW    | 38.9mA              |
-
-
-
------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-## III. MCC Settings
+## II. MCC Settings
 
 ### A. System Module
 
@@ -278,7 +240,7 @@ NOTE: System module settings should be adjusted to ensure that most of the perip
 
 
 
-## IV. Library: Core
+## III. Library APIs
 
 ### A. Overview
 
@@ -297,17 +259,17 @@ The **Core** library features the backbone of all libraries that will be built i
 
 Set one of these macro variables to **true** to set the master clock frequency. This corresponds to the value of FOSC. There should only be one of these variables set to **true**.
 
-| Macro Variable | Value                        | Description |
-| -------------- | ---------------------------- | ----------- |
-| _8MHZ          | 8000000UL                    |             |
-| _16MHZ         | 16000000UL                   |             |
-| _20MHZ         | 20000000UL                   |             |
-| _25MHZ         | 25000000UL                   |             |
-| _30MHZ         | 30000000UL                   |             |
-| _40MHZ         | 40000000UL                   |             |
-| _50MHZ         | 50000000UL                   |             |
-| _100MHZ        | 100000000UL                  |             |
-| MASTER_CLK     | Choose from any of the above |             |
+| Macro Variable | Value                                | Description |
+| -------------- | ------------------------------------ | ----------- |
+| _8MHZ          | 0x01                                 |             |
+| _16MHZ         | 0x02                                 |             |
+| _20MHZ         | 0x03                                 |             |
+| _25MHZ         | 0x04                                 |             |
+| _30MHZ         | 0x05                                 |             |
+| _40MHZ         | 0x06                                 |             |
+| _50MHZ         | 0x07                                 |             |
+| _100MHZ        | 0x08                                 |             |
+| MASTER_CLK     | Choose from any of the above (_xMHZ) |             |
 
 
 
@@ -357,7 +319,7 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 
 | Macro Variable    | Value  | Description                       |
 | ----------------- | ------ | --------------------------------- |
-| TMR1_PRIORITY     | 0x04   | Can be any value from 0x01 - 0x07 |
+| TMR1_PRIORITY     | 0x05   | Can be any value from 0x01 - 0x07 |
 | SCCP1_PRIORITY    | 0x05   | Can be any value from 0x01 - 0x07 |
 | PERIOD_1MS_8MHZ   | 0x0F9F | [1ms / (2 * FOSC_PERIOD)] - 1     |
 | PERIOD_1MS_16MHZ  | 0x1F3F | [1ms / (2 * FOSC_PERIOD)] - 1     |
@@ -377,11 +339,12 @@ Set one of these macro variables to **true** to set the master clock frequency. 
 ``` C
 // *****************************************************************************
 // @desc:       Initialize system clock, peripherals, and default GPIO states.
-//                  Required to call this function at the start of main program
-// @args:       None
+//                  Must be called at the start of main program
+// @args:       clk_freq [uint8_t]: Choose from macro constants defined in Core
+//                  library
 // @returns:    None
 // *****************************************************************************
-void SysInit( void );
+void SysInit( uint8_t clk_freq );
 ```
 
 ``` C
@@ -392,6 +355,15 @@ void SysInit( void );
 // @returns:    None
 // *****************************************************************************
 void ClockInit( void );
+```
+
+``` C
+// *****************************************************************************
+// @desc:       Returns the macro value corresponding to Master Clk frequency
+// @args:       None
+// @returns:    [uint8_t]: Master_Clock
+// *****************************************************************************
+uint8_t GetMasterClkFrequency( void );
 ```
 
 ``` C
@@ -408,6 +380,16 @@ void DisableAllPeripherals( void );
 
 
 #### F.2. GPIO
+
+``` C
+// *****************************************************************************
+// @desc:       Sets the default GPIO setting for all pins, at startup, as INPUT
+//                  This is called by SysInit()
+// @args:       None
+// @returns:    None
+// *****************************************************************************
+void GPIOInit( void );
+```
 
 ``` C
 // *****************************************************************************
@@ -453,23 +435,31 @@ void Toggle( uint8_t pin );
 
 
 
-#### F.2. Timing and delay
+#### F.3. Timer1
 
 ``` C
-// custom struct definition for Timer1
-typedef struct _TMR1_OBJ_STRUCT{
-    volatile uint16_t   counter;
-    volatile uint16_t   countmax;
-} TMR1_OBJ;
+// *****************************************************************************
+// @desc:       Enable Timer1 peripheral, initialize registers. Enables millis()
+//                  function by default.
+// @args:       as_timer [bool]: enables wait_ms()
+//              as_interrupt [bool]: allows user to define a custom ISR and set
+//                  the callback interval. Timer1SetInterrupt() must be called
+//                  right after.
+// @returns:    None
+// *****************************************************************************
+void Timer1Init( bool as_timer, bool as_interrupt );
 ```
 
 ``` C
 // *****************************************************************************
-// @desc:       Enable Timer1 peripheral, initialize registers and set interval
-// @args:       interval [uint16_t]: User defined interrupt interval in ms
+// @desc:       Assigns a user defined function as interrupt callback routine,
+//                  sets the callback interval. Only works if Timer1 is enabled
+//                  as Interrupt
+// @args:       interval [uint16_t]: Callback interval in ms
+//              InterruptHandler [pointer]: User defined ISR
 // @returns:    None
 // *****************************************************************************
-void Timer1Init( uint16_t interval );
+void Timer1SetInterrupt( uint16_t interval, void (* InterruptHandler)(void) );
 ```
 
 ``` C
@@ -488,53 +478,6 @@ void Timer1Start( void );
 // @returns:    None
 // *****************************************************************************
 void Timer1Stop( void );
-```
-
-``` C
-// *****************************************************************************
-// @desc:       Assigns a function defined by the user as interrupt callback
-//                  function
-// @args:       None
-// @returns:    None
-// *****************************************************************************
-void Timer1SetInterruptHandler(void (* InterruptHandler)(void));
-```
-
-
-
-``` C
-// custom struct definition for SCCP1
-typedef struct _SCCP1_TMR_OBJ_STRUCT{
-    volatile uint16_t           wait_counter;
-    volatile unsigned long long millis_counter;
-} SCCP1_OBJ;
-```
-
-``` C
-// *****************************************************************************
-// @desc:       Initializa SCCP1 to use wait_ms() and millis() functions
-// @args:       None
-// @returns:    None
-// *****************************************************************************
-void SCCP1Init( void );
-```
-
-``` C
-// *****************************************************************************
-// @desc:       Start SCCP1 timer, enable interrupts
-// @args:       None
-// @returns:    None
-// *****************************************************************************
-void SCCP1Start( void );
-```
-
-``` C
-// *****************************************************************************
-// @desc:       Stop SCCP1 timer, disable interrupt
-// @args:       None
-// @returns:    None
-// *****************************************************************************
-void SCCP1Stop( void );
 ```
 
 ``` C
@@ -558,115 +501,135 @@ unsigned long long millis( void );
 
 
 
-### G. Sample Codes
+### G. Sample Usage: Timer1 APIs
 
-#### G.1. Toggle pin using the general purpose Timer1 Interrupt
-
-This sample code uses the Timer1 peripheral to create a custom interrupt routine triggered every 50ms. This is useful when you have an event that should be triggered on a specific interval that is non-blocking, and does not need of too much code intervention. The interrupt interval can be set as an argument of Timer1Init() with a resolution of 1ms. We then assign a custom defined function to act as the interrupt service routine. There is no need to clear interrupt flags in our custom defined ISR, the API handles this internally. Timer1Start() is called to start the interrupt timer.
-
-Main program code:
+#### G.1. Sample code using wait_ms(), millis(), and interrupt
 
 ``` C
+/* ************************************************************************** */
+// Nanolay - Main C File
+//
+// Author:          Mark Angelo Tarvina (mttarvina)
+// Email:           mttarvina@gmail.com
+// Revision:        1.0
+// Last Updated:    06.Mar.2021
+//
+// Desc:            This program illustrates the usage of all Timer1 APIs in one
+//                  code. This approach however, is not recommended since this
+//                  is mixing blocking functions with non-blocking functions
+//                  which depending on the set interval will behave unexpectedly
+//                  in a lot of applications. This code is only a sample to show
+//                  how to use them.
+//
+// APIs used:       1. wait_ms() --> blocking function similar to delay() in
+//                      Arduino
+//                  2. millis() --> non-blocking function that works exactly
+//                      like millis() in Arduino
+//                  3. Attaching custom ISR [Timer1CallBack()] --> non-blocking
+//                      and works exactly as a timer interrupt
+/* ************************************************************************** */
+
 #include "nanolay/nanolay_core.h"
 
-uint8_t LedPin = PB2;
+void Timer1CallBack( void );                    // define custom ISR function
 
-void Timer1CallBack(void);                      // Define our custom callback function
+uint8_t Probe1Pin = PB2;                        // Toggled via wait_ms()
+uint8_t Probe2Pin = PB7;                        // Toggled via custom ISR
+uint8_t Probe3Pin = PB9;                        // Toggled via millis()
 
-int main(void) {
-    SysInit();
-
-    DigitalSetPin(LedPin, OUTPUT);
-    
-    Timer1Init(50);                    			// Set interrupt interval to 50ms
-    Timer1SetInterruptHandler(&Timer1CallBack); // assign callback function as interrupt handler
-    Timer1Start();
-
-    while (true) {
-        // do nothing here
-    }
-    return 0;
-}
-
-void __attribute__ ((weak)) Timer1CallBack(void){
-    //  interrupt routine, should be kept short
-    Toggle(LedPin);
-}
-```
-
-
-
-#### G.2. Toggle pin using a blocking delay function
-
-This sample code uses the SCCP1 peripheral to toggle a pin every 50ms. This is a blocking function similar to delay() in Arduino.
-
-``` C
-#include "nanolay/nanolay_core.h"
-
-uint8_t LedPin = PB2;
+unsigned long long timestamp;                   // used to store millis() value
 
 int main(void) {
-    SysInit();
-
-    DigitalSetPin(LedPin, OUTPUT);
-
-    SCCP1Init();
-    SCCP1Start();
-
-    while (true) {
-        Toggle(LedPin);
-        wait_ms(50);
-    }
-    return 0;
-}
-```
-
-
-
-#### G.3. Toggle a pin using a non blocking millis() function
-
-This sample code still uses the SCCP1 peripheral to toggle a pin every 50ms. This is similar to the millis() function in Arduino.
-
-``` C
-#include "nanolay/nanolay_core.h"
-
-#define TOGGLE_RATE 50              // 50ms
-
-uint8_t LedPin = PB2;
-
-unsigned long long timestamp = 0;
-
-int main(void) {
-    SysInit();
+    SysInit(_8MHZ);                             // Initialize board, set FOSC = 8MHz
  
-    DigitalSetPin(LedPin, OUTPUT);
+    DigitalSetPin(Probe1Pin, OUTPUT);           // Set PB2 as OUTPUT
+    DigitalSetPin(Probe2Pin, OUTPUT);           // Set PB7 as OUTPUT
+    DigitalSetPin(Probe3Pin, OUTPUT);           // Set PB9 as OUTPUT
     
-    SCCP1Init();
-    SCCP1Start();
-    
-    timestamp = millis();
+    Timer1Init(true, true);                     // Initialize Timer1
+                                                // Enable Timer functionality
+                                                // Enable Custom Interrupt functionality
+
+    Timer1SetInterrupt(10, &Timer1CallBack);    // Setup timer interrupt
+                                                // Set callback interval to 10ms
+                                                // Assign custom ISR
+
+    Timer1Start();                              // Start Timer1
+
+    timestamp = millis();                       // Save initial value for timestamp
     
     while (true) {
-        if ( millis() - timestamp >= TOGGLE_RATE ){
+        if ( millis() - timestamp >= 20 ){      // If 20ms has elapsed since last timestamp, toggle PB9
             timestamp = millis();
-            Toggle(LedPin);
+            Toggle(Probe3Pin);
         }
+
+        Toggle(Probe1Pin);                      // Toggle PB2 every 5ms
+        wait_ms(5);
     }
     return 0;
+}
+
+
+void __attribute__ ((weak)) Timer1CallBack( void ){
+    Toggle(Probe2Pin);                          // Toggle PB7 in our custom ISR
 }
 ```
 
 
 
-#### G.4 Expected Waveform at RB2
+#### G.2 Expected Waveform at RB2, RB7, and RB9
 
-Using any of the sample codes mentioned above should output the following waveform on pin RB2
+Using the sample code above outputs the following waveform on pins RB2 (yellow), RB7 (blue), and RB9 (purple).
 
-![wait_50ms](docs/img/wait_50ms.png)
+![timer1_api_sample_code_output](/docs/img/timer1_api_sample_code_output.png)
+
+
 
 
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+## IV. Miscellaneous Notes
+
+### A. Measured Current Consumption vs MASTER_CLK Frequency
+
+This is a series of current measurements using Nanolay RevA board. The main program code is shown below:
+
+``` C
+#include "nanolay/nanolay_core.h"
+
+int main(void) {
+    SysInit();
+    
+    while (true) {
+        // do nothing
+    }
+    return 0;
+}
+```
+
+
+
+| MASTER_CLK | CLKOUTEN | GPIO Default Setting | Current Consumption |
+| ---------- | -------- | -------------------- | ------------------- |
+| 4MHz       | true     | OUTPUT, Drive LOW    | 22.7mA              |
+| 4MHz       | false    | OUTPUT, Drive LOW    | 22.5mA              |
+| 4MHz       | false    | INPUT                | 22.4mA              |
+| 8MHz       | true     | OUTPUT, Drive LOW    | 23.8mA              |
+| 16MHz      | true     | OUTPUT, Drive LOW    | 27.9mA              |
+| 20MHz      | true     | OUTPUT, Drive LOW    | 28.3mA              |
+| 25MHz      | true     | OUTPUT, Drive LOW    | 28.9mA              |
+| 30MHz      | true     | OUTPUT, Drive LOW    | 31.1mA              |
+| 40MHz      | true     | OUTPUT, Drive LOW    | 31.1mA              |
+| 50MHz      | true     | OUTPUT, Drive LOW    | 32.5mA              |
+| 100MHz     | true     | OUTPUT, Drive LOW    | 38.9mA              |
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
